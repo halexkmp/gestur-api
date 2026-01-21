@@ -1,0 +1,84 @@
+from tortoise import fields, models
+from app.layers.db.enums import UserRole, PartnerType, SaleStatus, PaymentMethod, PartnerCustomerShift
+
+class User(models.Model):
+    id = fields.UUIDField(pk=True)
+    name = fields.CharField(max_length=255)
+    username = fields.CharField(max_length=255, unique=True)
+    password_hash = fields.CharField(max_length=255)
+    role = fields.CharEnumField(UserRole)
+    created_at = fields.DatetimeField(auto_now_add=True)
+    updated_at = fields.DatetimeField(auto_now=True)
+
+    class Meta:
+        table = "user"
+
+class Product(models.Model):
+    id = fields.UUIDField(pk=True)
+    name = fields.CharField(max_length=255)
+    type = fields.CharField(max_length=50)
+    default_price = fields.DecimalField(max_digits=10, decimal_places=2)
+    has_stock = fields.BooleanField(default=False)
+    stock_quantity = fields.IntField(default=0)
+    active = fields.BooleanField(default=True)
+    created_at = fields.DatetimeField(auto_now_add=True)
+    updated_at = fields.DatetimeField(auto_now=True)
+
+    class Meta:
+        table = "product"
+
+class Partner(models.Model):
+    id = fields.UUIDField(pk=True)
+    name = fields.CharField(max_length=255)
+    type = fields.CharEnumField(PartnerType, default=PartnerType.BUSSINES)
+    active = fields.BooleanField(default=True)
+    created_at = fields.DatetimeField(auto_now_add=True)
+
+    class Meta:
+        table = "partner"
+
+class Sale(models.Model):
+    id = fields.UUIDField(pk=True)
+    sale_number = fields.IntField(index=True)
+    total_amount = fields.DecimalField(max_digits=10, decimal_places=2)
+    partner = fields.ForeignKeyField("models.Partner", related_name="sales", null=True)
+    user = fields.ForeignKeyField("models.User", related_name="sales")
+    status = fields.CharEnumField(SaleStatus, default=SaleStatus.COMPLETED)
+    notes = fields.TextField(null=True)
+    observations = fields.TextField(null=True)
+    created_at = fields.DatetimeField(auto_now_add=True)
+    modified_at = fields.DatetimeField(auto_now=True)
+    modified_by = fields.CharField(max_length=255, null=True)
+
+    class Meta:
+        table = "sale"
+
+class SaleItem(models.Model):
+    id = fields.UUIDField(pk=True)
+    sale = fields.ForeignKeyField("models.Sale", related_name="items")
+    product = fields.ForeignKeyField("models.Product", related_name="sale_items")
+    quantity = fields.IntField()
+    unit_price = fields.DecimalField(max_digits=10, decimal_places=2)
+    total_price = fields.DecimalField(max_digits=10, decimal_places=2)
+
+    class Meta:
+        table = "sale_item"
+
+class SalePayment(models.Model):
+    id = fields.UUIDField(pk=True)
+    sale = fields.ForeignKeyField("models.Sale", related_name="payments")
+    payment_method = fields.CharEnumField(PaymentMethod)
+    amount = fields.DecimalField(max_digits=10, decimal_places=2)
+
+    class Meta:
+        table = "sale_payment"
+
+class PartnerCustomer(models.Model):
+    id = fields.UUIDField(pk=True)
+    partner = fields.ForeignKeyField("models.Partner", related_name="customers", null=True)
+    sale = fields.ForeignKeyField("models.Sale", related_name="partner_customers")
+    client_date = fields.DateField()
+    shift = fields.CharEnumField(PartnerCustomerShift)
+
+    class Meta:
+        table = "partner_customer"

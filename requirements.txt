@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+tortoise-orm
+aerich
+python-jose[cryptography]
+passlib[bcrypt]
+python-multipart
+psycopg2-binary
+pydantic-settings
+python-dotenv
