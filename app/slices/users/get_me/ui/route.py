@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from app.shared.auth import get_current_user
-from .schemas import UserResponse
+from app.slices.users.get_me.ui.schemas import UserResponse
 
 router = APIRouter()
 

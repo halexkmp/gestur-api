@@ -8,6 +8,10 @@ class PartnerType(str, Enum):
     BUGGYMAN = "BUGGYMAN"
     BUSINESS = "BUSINESS"
 
+class ProductType(str, Enum):
+    SERVICE = "SERVICE"
+    CONSUMABLE = "CONSUMABLE"
+
 class SaleStatus(str, Enum):
     COMPLETED = "COMPLETED"
     PENDING = "PENDING"

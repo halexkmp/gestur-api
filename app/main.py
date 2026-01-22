@@ -3,9 +3,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from tortoise.contrib.fastapi import register_tortoise
 from app.config import TORTOISE_ORM
 from app.slices.auth.urls import router as auth_router
-from app.slices.users.ui.urls import router as users_router
+from app.slices.users.urls import router as users_router
 from app.slices.products.urls import router as products_router
-from app.slices.sales.ui.urls import router as sales_router
+from app.slices.sales.urls import router as sales_router
+from app.slices.partners.urls import router as partners_router
 
 def create_app() -> FastAPI:
     app = FastAPI(title="Gestur API", version="1.0.0")
@@ -22,10 +23,8 @@ def create_app() -> FastAPI:
     app.include_router(auth_router)
     app.include_router(users_router)
     app.include_router(products_router)
-    # app.include_router(bugueiros_router)
-    # app.include_router(partners_router)
+    app.include_router(partners_router)
     app.include_router(sales_router)
-    # app.include_router(stock_router)
 
     # Register Tortoise
     register_tortoise(

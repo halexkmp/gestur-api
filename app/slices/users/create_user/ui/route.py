@@ -1,10 +1,18 @@
 from fastapi import APIRouter, Depends
 from app.shared.auth import get_current_user
-from .schemas import UserCreate, UserResponse
-from ..application.use_case import create_user
+from app.slices.users.create_user.ui.schemas import UserCreate, UserResponse
+from app.slices.users.create_user.application.use_case import CreateUser
+from app.slices.users.create_user.infra.repository import CreateUserRepository
 
 router = APIRouter()
 
-@router.post("", response_model=UserResponse, status_code=201)
+use_case = CreateUser(CreateUserRepository())
+
+@router.post("/", response_model=UserResponse, status_code=201)
 async def route(user_in: UserCreate, current_user = Depends(get_current_user)):
-    return await create_user(user_in)
+    return await use_case.execute(
+        name=user_in.name,
+        username=user_in.username,
+        password=user_in.password,
+        role=user_in.role,
+    )

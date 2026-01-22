@@ -1,5 +1,8 @@
-from app.shared.db.models import Partner
-from app.partners.schema import PartnerCreate
+from app.slices.partners.create_partner.infra.repository import CreatePartnerRepository
 
-async def create_partner(data: PartnerCreate):
-    return await Partner.create(**data.model_dump())
+class CreatePartner:
+    def __init__(self, repository: CreatePartnerRepository):
+        self.repository = repository
+
+    async def execute(self, name: str, active: bool = True):
+        return await self.repository.create(name=name, active=active)

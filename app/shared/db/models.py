@@ -1,5 +1,5 @@
 from tortoise import fields, models
-from app.shared.db.enums import UserRole, PartnerType, SaleStatus, PaymentMethod, PartnerCustomerShift
+from app.shared.db.enums import UserRole, PartnerType, SaleStatus, PaymentMethod, PartnerCustomerShift, ProductType
 
 class User(models.Model):
     id = fields.UUIDField(pk=True)
@@ -16,7 +16,7 @@ class User(models.Model):
 class Product(models.Model):
     id = fields.UUIDField(pk=True)
     name = fields.CharField(max_length=255)
-    type = fields.CharField(max_length=50)
+    type = fields.CharEnumField(ProductType, default=ProductType.SERVICE)
     default_price = fields.DecimalField(max_digits=10, decimal_places=2)
     has_stock = fields.BooleanField(default=False)
     stock_quantity = fields.IntField(default=0)
@@ -39,7 +39,7 @@ class Partner(models.Model):
 
 class Sale(models.Model):
     id = fields.UUIDField(pk=True)
-    sale_number = fields.IntField(index=True)
+    sale_code = fields.CharField(max_length=50)
     total_amount = fields.DecimalField(max_digits=10, decimal_places=2)
     partner = fields.ForeignKeyField("models.Partner", related_name="sales", null=True)
     user = fields.ForeignKeyField("models.User", related_name="sales")

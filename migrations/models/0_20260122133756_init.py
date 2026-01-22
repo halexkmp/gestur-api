@@ -1,0 +1,125 @@
+from tortoise import BaseDBAsyncClient
+
+RUN_IN_TRANSACTION = True
+
+
+async def upgrade(db: BaseDBAsyncClient) -> str:
+    return """
+        CREATE TABLE IF NOT EXISTS "partner" (
+    "id" UUID NOT NULL PRIMARY KEY,
+    "name" VARCHAR(255) NOT NULL,
+    "type" VARCHAR(8) NOT NULL DEFAULT 'BUSINESS',
+    "active" BOOL NOT NULL DEFAULT True,
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+COMMENT ON COLUMN "partner"."type" IS 'BUGGYMAN: BUGGYMAN\nBUSINESS: BUSINESS';
+CREATE TABLE IF NOT EXISTS "product" (
+    "id" UUID NOT NULL PRIMARY KEY,
+    "name" VARCHAR(255) NOT NULL,
+    "type" VARCHAR(10) NOT NULL DEFAULT 'SERVICE',
+    "default_price" DECIMAL(10,2) NOT NULL,
+    "has_stock" BOOL NOT NULL DEFAULT False,
+    "stock_quantity" INT NOT NULL DEFAULT 0,
+    "active" BOOL NOT NULL DEFAULT True,
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+COMMENT ON COLUMN "product"."type" IS 'SERVICE: SERVICE\nCONSUMABLE: CONSUMABLE';
+CREATE TABLE IF NOT EXISTS "user" (
+    "id" UUID NOT NULL PRIMARY KEY,
+    "name" VARCHAR(255) NOT NULL,
+    "username" VARCHAR(255) NOT NULL UNIQUE,
+    "password_hash" VARCHAR(255) NOT NULL,
+    "role" VARCHAR(8) NOT NULL,
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+COMMENT ON COLUMN "user"."role" IS 'ADMIN: ADMIN\nOPERATOR: OPERATOR';
+CREATE TABLE IF NOT EXISTS "sale" (
+    "id" UUID NOT NULL PRIMARY KEY,
+    "sale_code" VARCHAR(50) NOT NULL,
+    "total_amount" DECIMAL(10,2) NOT NULL,
+    "status" VARCHAR(9) NOT NULL DEFAULT 'COMPLETED',
+    "notes" TEXT,
+    "observations" TEXT,
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "modified_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "modified_by" VARCHAR(255),
+    "partner_id" UUID REFERENCES "partner" ("id") ON DELETE CASCADE,
+    "user_id" UUID NOT NULL REFERENCES "user" ("id") ON DELETE CASCADE
+);
+COMMENT ON COLUMN "sale"."status" IS 'COMPLETED: COMPLETED\nPENDING: PENDING\nCANCELED: CANCELED';
+CREATE TABLE IF NOT EXISTS "partner_customer" (
+    "id" UUID NOT NULL PRIMARY KEY,
+    "client_date" DATE NOT NULL,
+    "shift" VARCHAR(9) NOT NULL,
+    "partner_id" UUID REFERENCES "partner" ("id") ON DELETE CASCADE,
+    "sale_id" UUID NOT NULL REFERENCES "sale" ("id") ON DELETE CASCADE
+);
+COMMENT ON COLUMN "partner_customer"."shift" IS 'AFTERNOON: AFTERNOON\nMORNING: MORNING';
+CREATE TABLE IF NOT EXISTS "sale_item" (
+    "id" UUID NOT NULL PRIMARY KEY,
+    "quantity" INT NOT NULL,
+    "unit_price" DECIMAL(10,2) NOT NULL,
+    "total_price" DECIMAL(10,2) NOT NULL,
+    "product_id" UUID NOT NULL REFERENCES "product" ("id") ON DELETE CASCADE,
+    "sale_id" UUID NOT NULL REFERENCES "sale" ("id") ON DELETE CASCADE
+);
+CREATE TABLE IF NOT EXISTS "sale_payment" (
+    "id" UUID NOT NULL PRIMARY KEY,
+    "payment_method" VARCHAR(11) NOT NULL,
+    "amount" DECIMAL(10,2) NOT NULL,
+    "sale_id" UUID NOT NULL REFERENCES "sale" ("id") ON DELETE CASCADE
+);
+COMMENT ON COLUMN "sale_payment"."payment_method" IS 'PIX: PIX\nCURRENCY: CURRENCY\nCREDIT_CARD: CREDIT_CARD';
+CREATE TABLE IF NOT EXISTS "aerich" (
+    "id" SERIAL NOT NULL PRIMARY KEY,
+    "version" VARCHAR(255) NOT NULL,
+    "app" VARCHAR(100) NOT NULL,
+    "content" JSONB NOT NULL
+);"""
+
+
+async def downgrade(db: BaseDBAsyncClient) -> str:
+    return """
+        """
+
+
+MODELS_STATE = (
+    "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"
+)

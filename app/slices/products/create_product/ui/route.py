@@ -7,7 +7,7 @@ router = APIRouter()
 
 use_case = CreateProduct(CreateProductRepository())
 
-@router.post("", response_model=ProductResponse, status_code=201)
+@router.post("/", response_model=ProductResponse, status_code=201)
 async def route(data: ProductCreate):
     return await use_case.execute(
         name=data.name,
