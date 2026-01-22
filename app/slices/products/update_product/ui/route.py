@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
-from app.layers.auth import get_current_user
+from app.shared.auth import get_current_user
 from app.slices.products.ui.schemas import ProductResponse, ProductUpdate
-from app.slices.products.update_product.handler import update_product
+from app.slices.products.update_product.application.use_case import update_product
 from uuid import UUID
 
 router = APIRouter()

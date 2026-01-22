@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
-from app.layers.auth import get_current_user
-from app.slices.products.ui.schemas import ProductResponse
-from app.slices.products.list_products.handler import list_products
+from app.shared.auth import get_current_user
+from app.slices.products.list_products.ui.schemas import ProductResponse
+from app.slices.products.list_products.application.use_case import list_products
 from typing import List
 
 router = APIRouter()

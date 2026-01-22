@@ -1,8 +1,8 @@
 from fastapi import APIRouter
-from app.slices.products.create_product.route import router as create_router
-from app.slices.products.list_products.route import router as list_router
-from app.slices.products.get_product.route import router as get_router
-from app.slices.products.update_product.route import router as update_router
+from app.slices.products.create_product.ui.route import router as create_router
+from app.slices.products.list_products.ui.route import router as list_router
+from app.slices.products.get_product.ui.route import router as get_router
+from app.slices.products.update_product.ui.route import router as update_router
 from app.slices.products.delete_product.route import router as delete_router
 
 router = APIRouter(prefix="/products", tags=["products"])

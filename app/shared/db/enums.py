@@ -6,7 +6,7 @@ class UserRole(str, Enum):
 
 class PartnerType(str, Enum):
     BUGGYMAN = "BUGGYMAN"
-    BUSSINES = "BUSSINES"
+    BUSINESS = "BUSINESS"
 
 class SaleStatus(str, Enum):
     COMPLETED = "COMPLETED"

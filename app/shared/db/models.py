@@ -1,5 +1,5 @@
 from tortoise import fields, models
-from app.layers.db.enums import UserRole, PartnerType, SaleStatus, PaymentMethod, PartnerCustomerShift
+from app.shared.db.enums import UserRole, PartnerType, SaleStatus, PaymentMethod, PartnerCustomerShift
 
 class User(models.Model):
     id = fields.UUIDField(pk=True)
@@ -30,7 +30,7 @@ class Product(models.Model):
 class Partner(models.Model):
     id = fields.UUIDField(pk=True)
     name = fields.CharField(max_length=255)
-    type = fields.CharEnumField(PartnerType, default=PartnerType.BUSSINES)
+    type = fields.CharEnumField(PartnerType, default=PartnerType.BUSINESS)
     active = fields.BooleanField(default=True)
     created_at = fields.DatetimeField(auto_now_add=True)
 

@@ -1,7 +1,7 @@
 from uuid import UUID
 from fastapi import HTTPException
-from app.layers.db.models import Product
-from app.slices.products.ui.schemas import ProductUpdate
+from app.shared.db.models import Product
+from app.slices.products.update_product.ui.schemas import ProductUpdate
 
 async def update_product(product_id: UUID, data: ProductUpdate):
     product = await Product.get_or_none(id=product_id)

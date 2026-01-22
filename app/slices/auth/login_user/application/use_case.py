@@ -1,8 +1,8 @@
 from fastapi.security import OAuth2PasswordRequestForm
 from datetime import timedelta
 from fastapi import HTTPException, status
-from app.layers.auth import verify_password, create_access_token
-from app.layers.db.models import User
+from app.shared.auth import verify_password, create_access_token
+from app.shared.db.models import User
 from app.config import settings
 
 async def login(form_data: OAuth2PasswordRequestForm):

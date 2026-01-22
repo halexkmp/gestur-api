@@ -3,6 +3,13 @@ from uuid import UUID
 from datetime import datetime
 from typing import Optional
 
+class ProductBase(BaseModel):
+    name: str
+    type: str
+    default_price: float
+    has_stock: bool = False
+    stock_quantity: int = 0
+    active: bool = True
 
 class ProductUpdate(BaseModel):
     name: Optional[str] = None
@@ -12,7 +19,7 @@ class ProductUpdate(BaseModel):
     stock_quantity: Optional[int] = None
     active: Optional[bool] = None
 
-class ProductResponse(BaseModel):
+class ProductResponse(ProductBase):
     id: UUID
     created_at: datetime
     updated_at: datetime

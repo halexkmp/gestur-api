@@ -1,10 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from tortoise.contrib.fastapi import register_tortoise
-from app.config import settings, TORTOISE_ORM
-from app.slices.auth.ui.urls import router as auth_router
+from app.config import TORTOISE_ORM
+from app.slices.auth.urls import router as auth_router
 from app.slices.users.ui.urls import router as users_router
-from app.slices.products.ui.urls import router as products_router
+from app.slices.products.urls import router as products_router
 from app.slices.sales.ui.urls import router as sales_router
 
 def create_app() -> FastAPI:
