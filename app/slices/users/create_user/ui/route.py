@@ -1,15 +1,16 @@
-from fastapi import APIRouter, Depends
-from app.shared.auth import get_current_user
+from fastapi import APIRouter
+
+from app.slices.users.create_user.infra.password_hash_create import PasswordHashCreate
 from app.slices.users.create_user.ui.schemas import UserCreate, UserResponse
 from app.slices.users.create_user.application.use_case import CreateUser
 from app.slices.users.create_user.infra.repository import CreateUserRepository
 
 router = APIRouter()
 
-use_case = CreateUser(CreateUserRepository())
+use_case = CreateUser(CreateUserRepository(), PasswordHashCreate())
 
 @router.post("/", response_model=UserResponse, status_code=201)
-async def route(user_in: UserCreate, current_user = Depends(get_current_user)):
+async def route(user_in: UserCreate):
     return await use_case.execute(
         name=user_in.name,
         username=user_in.username,

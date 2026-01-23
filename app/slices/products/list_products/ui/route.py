@@ -1,5 +1,4 @@
-from fastapi import APIRouter, Depends
-from app.shared.auth import get_current_user
+from fastapi import APIRouter
 from app.slices.products.list_products.ui.schemas import ProductResponse
 from app.slices.products.list_products.application.use_case import ListProducts
 from app.slices.products.list_products.infra.repository import ListProductsRepository
@@ -10,5 +9,5 @@ router = APIRouter()
 use_case = ListProducts(ListProductsRepository())
 
 @router.get("/", response_model=List[ProductResponse])
-async def route(current_user = Depends(get_current_user)):
+async def route():
     return await use_case.execute()

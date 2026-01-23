@@ -1,5 +1,4 @@
-from fastapi import APIRouter, Depends
-from app.shared.auth import get_current_user
+from fastapi import APIRouter
 from .schemas import ProductResponse, ProductUpdate
 from app.slices.products.update_product.application.use_case import UpdateProduct
 from app.slices.products.update_product.infra.repository import UpdateProductRepository
@@ -10,7 +9,7 @@ router = APIRouter()
 use_case = UpdateProduct(UpdateProductRepository())
 
 @router.put("/{product_id}", response_model=ProductResponse)
-async def route(product_id: UUID, product_in: ProductUpdate, current_user = Depends(get_current_user)):
+async def route(product_id: UUID, product_in: ProductUpdate):
     return await use_case.execute(
         product_id=product_id,
         name=product_in.name,
