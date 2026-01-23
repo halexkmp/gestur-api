@@ -4,4 +4,4 @@ from app.slices.users.get_me.ui.route import router as me_router
 
 router = APIRouter(prefix="/users", tags=["users"])
 router.include_router(create_router)
-router.include_router(me_router, prefix="/me")
+router.include_router(me_router)

@@ -11,7 +11,7 @@ class LoginUser:
         self.repository = repository
 
     async def execute(self, username: str, password: str):
-        user = await self.repository.get_user("hpaiva")
+        user = await self.repository.get_user(username)
         if not user or not self.verifier.verify_hash_password(password, user.password_hash):
             raise Exception("Invalid credentials")
         access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
