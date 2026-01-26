@@ -25,3 +25,7 @@ class PaymentMethod(str, Enum):
 class PartnerCustomerShift(str, Enum):
     AFTERNOON = "AFTERNOON"
     MORNING = "MORNING"
+
+class StockChangeType(str, Enum):
+    IN = "IN"
+    OUT = "OUT"

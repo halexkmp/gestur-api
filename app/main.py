@@ -7,6 +7,7 @@ from app.slices.users.urls import router as users_router
 from app.slices.products.urls import router as products_router
 from app.slices.sales.urls import router as sales_router
 from app.slices.partners.urls import router as partners_router
+from app.slices.reports.urls import router as reports_router
 
 def create_app() -> FastAPI:
     app = FastAPI(title="Gestur API", version="1.0.0")
@@ -25,6 +26,7 @@ def create_app() -> FastAPI:
     app.include_router(products_router)
     app.include_router(partners_router)
     app.include_router(sales_router)
+    app.include_router(reports_router)
 
     # Register Tortoise
     register_tortoise(
