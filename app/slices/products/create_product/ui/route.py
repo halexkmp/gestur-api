@@ -14,7 +14,6 @@ async def route(data: ProductCreate, current_user=Depends(get_current_user)):
         name=data.name,
         type=data.type,
         default_price=data.default_price,
-        has_stock=data.has_stock,
         stock_quantity=data.stock_quantity,
         active=data.active,
     )

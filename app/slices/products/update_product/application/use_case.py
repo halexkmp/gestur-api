@@ -13,7 +13,6 @@ class UpdateProduct:
         name: Optional[str] = None,
         type: Optional[str] = None,
         default_price: Optional[float] = None,
-        has_stock: Optional[bool] = None,
         stock_quantity: Optional[int] = None,
         active: Optional[bool] = None,
     ):
@@ -22,7 +21,6 @@ class UpdateProduct:
             name=name,
             type=type,
             default_price=default_price,
-            has_stock=has_stock,
             stock_quantity=stock_quantity,
             active=active,
         )

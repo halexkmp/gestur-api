@@ -12,5 +12,5 @@ use_case = ListPartnersByType(ListPartnersByTypeRepository())
 
 
 @router.get("/by-type", response_model=List[PartnerResponse])
-async def route(type: PartnerType = Query(...), current_user=Depends(get_current_user)):
+async def route(type: PartnerType = Query(), current_user=Depends(get_current_user)):
     return await use_case.execute(type=type)

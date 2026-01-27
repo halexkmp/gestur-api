@@ -9,7 +9,6 @@ class UpdateProductRepository:
         name: Optional[str] = None,
         type: Optional[str] = None,
         default_price: Optional[float] = None,
-        has_stock: Optional[bool] = None,
         stock_quantity: Optional[int] = None,
         active: Optional[bool] = None,
     ) -> Optional[Product]:
@@ -23,8 +22,6 @@ class UpdateProductRepository:
             update_data["type"] = type
         if default_price is not None:
             update_data["default_price"] = default_price
-        if has_stock is not None:
-            update_data["has_stock"] = has_stock
         if stock_quantity is not None:
             update_data["stock_quantity"] = stock_quantity
         if active is not None:

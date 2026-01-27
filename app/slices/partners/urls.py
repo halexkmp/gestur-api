@@ -8,8 +8,8 @@ from app.slices.partners.list_partners_by_type.ui.route import router as list_pa
 
 router = APIRouter(prefix="/partners", tags=["partners"]) 
 router.include_router(create_partner)
+router.include_router(list_partners_by_type)
 router.include_router(update_partner)
 router.include_router(delete_partner)
 router.include_router(list_partners)
 router.include_router(get_partner)
-router.include_router(list_partners_by_type)

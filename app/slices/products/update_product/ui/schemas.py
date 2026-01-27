@@ -7,7 +7,6 @@ class ProductBase(BaseModel):
     name: str
     type: str
     default_price: float
-    has_stock: bool = False
     stock_quantity: int = 0
     active: bool = True
 
@@ -15,7 +14,6 @@ class ProductUpdate(BaseModel):
     name: Optional[str] = None
     type: Optional[str] = None
     default_price: Optional[float] = None
-    has_stock: Optional[bool] = None
     stock_quantity: Optional[int] = None
     active: Optional[bool] = None
 

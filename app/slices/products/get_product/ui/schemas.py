@@ -7,7 +7,6 @@ class ProductResponse(BaseModel):
     name: str
     type: str
     default_price: float
-    has_stock: bool
     stock_quantity: int
     active: bool
     created_at: datetime

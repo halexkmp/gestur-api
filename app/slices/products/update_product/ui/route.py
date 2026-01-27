@@ -16,7 +16,6 @@ async def route(product_id: UUID, product_in: ProductUpdate, current_user=Depend
         name=product_in.name,
         type=product_in.type,
         default_price=product_in.default_price,
-        has_stock=product_in.has_stock,
         stock_quantity=product_in.stock_quantity,
         active=product_in.active,
     )

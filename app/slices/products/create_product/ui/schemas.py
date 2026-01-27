@@ -6,7 +6,6 @@ class ProductBase(BaseModel):
     name: str
     type: str
     default_price: float
-    has_stock: bool = False
     stock_quantity: int = 0
     active: bool = True
 

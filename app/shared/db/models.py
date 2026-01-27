@@ -18,7 +18,6 @@ class Product(models.Model):
     name = fields.CharField(max_length=255)
     type = fields.CharEnumField(ProductType, default=ProductType.SERVICE)
     default_price = fields.DecimalField(max_digits=10, decimal_places=2)
-    has_stock = fields.BooleanField(default=False)
     stock_quantity = fields.IntField(default=0)
     active = fields.BooleanField(default=True)
     created_at = fields.DatetimeField(auto_now_add=True)

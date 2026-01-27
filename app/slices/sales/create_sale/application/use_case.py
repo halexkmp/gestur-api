@@ -17,7 +17,7 @@ class CreateSale:
         observations: Optional[str],
     ):
         total_amount = sum(
-            item.quantity * item.unit_price for item in items
+            item['quantity'] * item['unit_price'] for item in items
         )
 
         sale_code = "{}{}".format(user_id, datetime.now().strftime("%Y%m%d%H%M%S"))
