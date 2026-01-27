@@ -28,4 +28,4 @@ class FilterSalesRepository:
             query = query.filter(items__product_id=product_id)
         # Avoid duplicates when filtering via relation
         query = query.distinct()
-        return await query.prefetch_related("items", "payments")
+        return await query.prefetch_related("items", "payments", "user")

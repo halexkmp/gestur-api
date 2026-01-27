@@ -29,6 +29,7 @@ class Product(models.Model):
 class Partner(models.Model):
     id = fields.UUIDField(pk=True)
     name = fields.CharField(max_length=255)
+    pix_key = fields.CharField(max_length=255, null=True)
     type = fields.CharEnumField(PartnerType, default=PartnerType.BUSINESS)
     active = fields.BooleanField(default=True)
     created_at = fields.DatetimeField(auto_now_add=True)

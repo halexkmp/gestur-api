@@ -9,11 +9,13 @@ class UpdatePartner:
     async def execute(
         self,
         partner_id: UUID,
+        pix_key: Optional[str] = None,
         name: Optional[str] = None,
         active: Optional[bool] = None,
     ):
         return await self.repository.update(
             partner_id=partner_id,
+            pix_key=pix_key,
             name=name,
             active=active,
         )

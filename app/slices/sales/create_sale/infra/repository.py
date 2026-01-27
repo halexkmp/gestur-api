@@ -17,17 +17,36 @@ class CreateSaleRepository:
         notes: Optional[str],
         observations: Optional[str],
     ):
-       async with in_transaction():
-            return await Sale.create(
+        # You can't set backward relations (items, payments) through init in Tortoise ORM.
+        # Create the Sale first, then create SaleItem and SalePayment rows linking by sale_id.
+        async with in_transaction():
+            sale = await Sale.create(
                 sale_code=sale_code,
                 total_amount=total_amount,
                 partner_id=partner_id,
                 user_id=user_id,
                 notes=notes,
                 observations=observations,
-                items=items,
-                payments=payments,
             )
+            # Create items
+            for it in items or []:
+                total_price = it["quantity"] * it["unit_price"]
+                await SaleItem.create(
+                    sale_id=sale.id,
+                    product_id=it["product_id"],
+                    quantity=it["quantity"],
+                    unit_price=it["unit_price"],
+                    total_price=total_price,
+                )
+            # Create payments
+            for p in payments or []:
+                await SalePayment.create(
+                    sale_id=sale.id,
+                    payment_method=p["payment_method"],
+                    amount=p["amount"],
+                )
+        # Return sale with related items and payments
+        return await Sale.get(id=sale.id).prefetch_related("items", "payments")
 
 
 

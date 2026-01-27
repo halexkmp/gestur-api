@@ -9,6 +9,6 @@ router = APIRouter()
 
 use_case = CreatePartner(CreatePartnerRepository())
 
-@router.get("/", response_model=PartnerResponse)
+@router.post("/", response_model=PartnerResponse)
 async def route(data: PartnerCreate, current_user=Depends(get_current_user)):
-    return await use_case.execute(name=data.name, active=data.active)
+    return await use_case.execute(name=data.name, active=data.active, pix_key=data.pix_key)

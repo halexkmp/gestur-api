@@ -5,6 +5,11 @@ from typing import Optional, List
 from app.shared.db.enums import SaleStatus, PaymentMethod
 
 
+class UserResponse(BaseModel):
+    id: UUID
+    name: str
+    username: str
+
 class SaleItemReport(BaseModel):
     id: UUID
     product_id: UUID
@@ -30,7 +35,7 @@ class SaleReportResponse(BaseModel):
     sale_code: str
     total_amount: float
     partner_id: Optional[UUID]
-    user_id: UUID
+    user: UserResponse
     status: SaleStatus
     notes: Optional[str]
     observations: Optional[str]

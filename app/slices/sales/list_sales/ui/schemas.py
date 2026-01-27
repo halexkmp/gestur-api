@@ -29,7 +29,7 @@ class SalePaymentResponse(SalePaymentBase):
 
 class SaleResponse(BaseModel):
     id: UUID
-    sale_number: int
+    sale_code: str
     total_amount: float
     partner_id: Optional[UUID]
     user_id: UUID

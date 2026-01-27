@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import BaseModel
 from uuid import UUID
 from datetime import datetime
@@ -7,6 +9,7 @@ class PartnerResponse(BaseModel):
     id: UUID
     name: str
     active: bool
+    pix_key: Optional[str] = None
     created_at: datetime
 
     class Config:

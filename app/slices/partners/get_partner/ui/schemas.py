@@ -6,6 +6,7 @@ class PartnerResponse(BaseModel):
     id: UUID
     name: str
     active: bool
+    pix_key: str
     created_at: datetime
 
     class Config:
