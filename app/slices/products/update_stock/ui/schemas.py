@@ -14,9 +14,3 @@ class UpdateStockRequest(BaseModel):
 
 class StockResponse(BaseModel):
     id: UUID
-    change_type: StockChangeType
-    created_at: datetime
-    product_id: UUID
-    quantity_change: int
-    sale_id: Optional[UUID] = None
-    user_id: UUID
