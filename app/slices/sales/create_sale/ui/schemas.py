@@ -19,5 +19,5 @@ class SaleCreate(BaseModel):
     payments: List[SalePaymentCreate]
     notes: Optional[str] = None
     observations: Optional[str] = None
-    partner_customer_date: Optional[date] = None
+    partner_customer_quantity: Optional[int] = None
     partner_customer_shift: Optional[PartnerCustomerShift] = None

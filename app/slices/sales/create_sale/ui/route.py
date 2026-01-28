@@ -25,4 +25,6 @@ async def route(sale_in: SaleCreate, current_user = Depends(get_current_user)):
         } for p in sale_in.payments],
         notes=sale_in.notes,
         observations=sale_in.observations,
+        partner_customer_shift=sale_in.partner_customer_shift,
+        partner_customer_quantity=sale_in.partner_customer_quantity
     )

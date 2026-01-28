@@ -27,4 +27,6 @@ async def route(
         user_id=user_id,
         product_id=product_id,
         partner_id=partner_id,
+        current_user_id = current_user.id,
+        current_user_role=current_user.role,
     )

@@ -76,8 +76,8 @@ class SalePayment(models.Model):
 class PartnerCustomer(models.Model):
     id = fields.UUIDField(pk=True)
     partner = fields.ForeignKeyField("models.Partner", related_name="customers", null=True)
-    sale = fields.ForeignKeyField("models.Sale", related_name="partner_customers")
-    client_date = fields.DateField()
+    sale = fields.ForeignKeyField("models.Sale", related_name="partner_customer")
+    quantity = fields.IntField()
     shift = fields.CharEnumField(PartnerCustomerShift)
 
     class Meta:

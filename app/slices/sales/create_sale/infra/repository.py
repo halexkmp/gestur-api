@@ -1,8 +1,8 @@
+from datetime import date
 from typing import List, Optional
 from uuid import UUID
-from datetime import date
 from tortoise.transactions import in_transaction
-from app.shared.db.models import Sale, SaleItem, SalePayment, Product, PartnerCustomer
+from app.shared.db.models import Sale, SaleItem, SalePayment, PartnerCustomer
 from app.shared.db.enums import PartnerCustomerShift
 
 class CreateSaleRepository:
@@ -16,6 +16,8 @@ class CreateSaleRepository:
         payments: list,
         notes: Optional[str],
         observations: Optional[str],
+        partner_customer_shift: Optional[str] = None,
+        partner_customer_quantity: Optional[int] = None
     ):
         # You can't set backward relations (items, payments) through init in Tortoise ORM.
         # Create the Sale first, then create SaleItem and SalePayment rows linking by sale_id.
@@ -45,6 +47,11 @@ class CreateSaleRepository:
                     payment_method=p["payment_method"],
                     amount=p["amount"],
                 )
+            if partner_id and partner_customer_shift and partner_customer_quantity:
+               await PartnerCustomer.create(partner_id = partner_id,
+                                       sale_id = sale.id,
+                                       quantity= partner_customer_quantity,
+                                       shift= partner_customer_shift)
         # Return sale with related items and payments
         return await Sale.get(id=sale.id).prefetch_related("items", "payments")
 

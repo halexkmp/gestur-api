@@ -26,12 +26,11 @@ class SalePaymentResponse(SalePaymentBase):
     class Config:
         from_attributes = True
 
-
 class SaleResponse(BaseModel):
     id: UUID
     sale_code: str
     total_amount: float
-    partner_id: Optional[UUID]
+    partner: Optional[UUID]
     user_id: UUID
     status: SaleStatus
     notes: Optional[str]

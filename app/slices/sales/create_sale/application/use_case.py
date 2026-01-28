@@ -15,6 +15,8 @@ class CreateSale:
         payments: list,
         notes: Optional[str],
         observations: Optional[str],
+        partner_customer_shift: Optional[str] = None,
+        partner_customer_quantity: Optional[int] = None
     ):
         total_amount = sum(
             item['quantity'] * item['unit_price'] for item in items
@@ -31,5 +33,7 @@ class CreateSale:
             payments=payments,
             notes=notes,
             observations=observations,
+            partner_customer_shift=partner_customer_shift,
+            partner_customer_quantity=partner_customer_quantity
         )
 
