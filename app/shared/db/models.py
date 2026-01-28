@@ -88,6 +88,7 @@ class Stock(models.Model):
     change_type = fields.CharEnumField(StockChangeType)
     created_at = fields.DatetimeField(auto_now_add=True)
     product = fields.ForeignKeyField("models.Product", related_name="stock_entries")
+    reason = fields.TextField(null=True, default=None, max_length=255)
     quantity_change = fields.IntField()
     sale = fields.ForeignKeyField("models.Sale", related_name="stock_entries", null=True)
     user = fields.ForeignKeyField("models.User", related_name="stock_entries")

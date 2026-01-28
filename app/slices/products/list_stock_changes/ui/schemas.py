@@ -31,5 +31,6 @@ class StockResponse(BaseModel):
     quantity_change: int
     sale: Optional[SaleResponse] = None
     user: UserResponse
+    reason: Optional[str] = None
     class Config:
         from_attributes = True

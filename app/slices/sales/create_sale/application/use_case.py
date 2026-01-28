@@ -1,6 +1,8 @@
 from typing import List, Optional
 from uuid import UUID
 from datetime import date, datetime
+
+from app.slices.sales.create_sale.domain.rules import update_stock_by_sale
 from app.slices.sales.create_sale.infra.repository import CreateSaleRepository
 
 class CreateSale:
@@ -23,8 +25,7 @@ class CreateSale:
         )
 
         sale_code = "{}{}".format(user_id, datetime.now().strftime("%Y%m%d%H%M%S"))
-
-        return await self.repository.create(
+        sale = await self.repository.create(
             sale_code=sale_code,
             total_amount=total_amount,
             user_id=user_id,
@@ -36,4 +37,6 @@ class CreateSale:
             partner_customer_shift=partner_customer_shift,
             partner_customer_quantity=partner_customer_quantity
         )
+        await update_stock_by_sale(sale)
+        return sale
 

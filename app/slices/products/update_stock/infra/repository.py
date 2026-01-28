@@ -13,6 +13,7 @@ class UpdateStockRepository:
         quantity_change: int,
         user_id: UUID,
         sale_id: Optional[UUID] = None,
+        reason: Optional[str] = None
     ) -> Optional[Stock]:
         product = await Product.get_or_none(id=product_id)
         user = await User.get_or_none(id=user_id)
@@ -37,5 +38,6 @@ class UpdateStockRepository:
             quantity_change=delta,
             sale=sale,
             user=user,
+            reason=reason
         )
         return stock
