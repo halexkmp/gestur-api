@@ -1,13 +1,79 @@
+from typing import List, Literal
 import os
+from pydantic import Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+
 class Settings(BaseSettings):
-    DATABASE_URL: str = os.getenv("DATABASE_URL", "postgres://postgres:postgres@localhost:5432/gestur")
-    SECRET_KEY: str = os.getenv("SECRET_KEY", "your-secret-key-change-it-in-production")
+    # Environment
+    ENVIRONMENT: Literal["development", "production"] = Field(
+        default=os.getenv("ENVIRONMENT", "development")
+    )
+    DEBUG: bool = Field(default=False)
+
+    # Security / Auth
+    SECRET_KEY: str | None = Field(default=None)
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7  # 7 days
 
-    model_config = SettingsConfigDict(env_file=".env")
+    # Database
+    DATABASE_URL: str | None = Field(default=None)
+
+    # CORS
+    ALLOWED_ORIGINS: List[str] = Field(default_factory=list)
+
+    # ORM / Migrations
+    GENERATE_SCHEMAS: bool = Field(default=True)
+    RUN_MIGRATIONS_ON_STARTUP: bool = Field(default=False)
+
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+
+    @model_validator(mode="after")
+    def _apply_env_defaults(self):  # type: ignore[override]
+        is_production = self.ENVIRONMENT == "production"
+
+        # DEBUG flag
+        self.DEBUG = not is_production
+
+        # Database URL defaults and validation
+        if not self.DATABASE_URL:
+            self.DATABASE_URL = os.getenv(
+                "DATABASE_URL",
+                "postgres://postgres:postgres@localhost:5432/gestur"
+                if not is_production
+                else None,
+            )
+        if is_production and not self.DATABASE_URL:
+            raise ValueError(
+                "DATABASE_URL must be set in production environment"
+            )
+
+        # Secret key defaults and validation
+        if not self.SECRET_KEY:
+            self.SECRET_KEY = os.getenv(
+                "SECRET_KEY",
+                "dev-secret-key-change-me" if not is_production else None,
+            )
+        if is_production and not self.SECRET_KEY:
+            raise ValueError(
+                "SECRET_KEY must be set in production environment"
+            )
+
+        # Allowed origins parsing: comma-separated string in env
+        origins_env = os.getenv("ALLOWED_ORIGINS")
+        if origins_env:
+            self.ALLOWED_ORIGINS = [
+                o.strip() for o in origins_env.split(",") if o.strip()
+            ]
+        else:
+            # Defaults per environment
+            self.ALLOWED_ORIGINS = ["*"] if not is_production else []
+
+        # Generate schemas only in development by default
+        self.GENERATE_SCHEMAS = not is_production
+
+        return self
+
 
 settings = Settings()
 
