@@ -2,7 +2,7 @@ from typing import List, Optional
 from datetime import datetime
 from uuid import UUID
 from fastapi import APIRouter, Depends, Query
-from app.shared.security.current_password import get_current_user
+from app.shared.security.current_user import get_current_user
 from app.slices.reports.filter_sales.application.use_case import FilterSales
 from app.slices.reports.filter_sales.infra.repository import FilterSalesRepository
 from .schemas import SaleReportResponse

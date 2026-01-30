@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from uuid import UUID
-from app.shared.security.current_password import get_current_user
+from app.shared.security.current_user import get_current_user
 from app.slices.sales.update_sale.application.use_case import UpdateSale
 from app.slices.sales.update_sale.infra.repository import UpdateSaleRepository
 from app.slices.sales.update_sale.ui.schemas import SaleUpdate

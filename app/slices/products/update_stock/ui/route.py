@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from typing import List
-from app.shared.security.current_password import get_current_user
+from app.shared.security.current_user import get_current_user
 from app.slices.products.update_stock.application.use_case import UpdateStock
 from app.slices.products.update_stock.infra.repository import UpdateStockRepository
 from .schemas import UpdateStockRequest, StockResponse

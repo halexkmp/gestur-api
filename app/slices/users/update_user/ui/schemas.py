@@ -9,12 +9,14 @@ class UserUpdate(BaseModel):
     username: Optional[str] = None
     password: Optional[str] = None
     role: Optional[UserRole] = None
+    active: Optional[bool] = None
 
 class UserResponse(BaseModel):
     id: UUID
     name: str
     username: str
     role: UserRole
+    active: bool
     created_at: datetime
 
     class Config:

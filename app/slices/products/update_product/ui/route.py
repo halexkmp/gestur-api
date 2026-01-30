@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from app.shared.security.current_password import get_current_user
+from app.shared.security.current_user import get_current_user
 from .schemas import ProductResponse, ProductUpdate
 from app.slices.products.update_product.application.use_case import UpdateProduct
 from app.slices.products.update_product.infra.repository import UpdateProductRepository

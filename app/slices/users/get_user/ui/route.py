@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from uuid import UUID
-from app.shared.security.current_password import get_current_user
+from app.shared.security.current_user import get_current_user
 from app.slices.users.get_user.application.use_case import GetUser
 from app.slices.users.get_user.infra.repository import GetUserRepository
 from .schemas import UserResponse

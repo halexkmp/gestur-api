@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from uuid import UUID
-from app.shared.security.current_password import get_current_user
+from app.shared.security.current_user import get_current_user
 from app.slices.users.update_user.application.use_case import UpdateUser
 from app.slices.users.update_user.infra.repository import UpdateUserRepository
 from app.slices.users.create_user.infra.password_hash_create import PasswordHashCreate
@@ -18,4 +18,5 @@ async def route(user_id: UUID, user_in: UserUpdate, current_user=Depends(get_cur
         username=user_in.username,
         password=user_in.password,
         role=user_in.role,
+        active=user_in.active
     )

@@ -8,6 +8,7 @@ class UserResponse(BaseModel):
     name: str
     username: str
     role: UserRole
+    active: bool
     created_at: datetime
 
     class Config:

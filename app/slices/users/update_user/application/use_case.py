@@ -16,6 +16,7 @@ class UpdateUser:
         username: Optional[str] = None,
         password: Optional[str] = None,
         role: Optional[UserRole] = None,
+        active: Optional[bool] = None
     ):
         password_hash = None
         if password is not None:
@@ -26,4 +27,5 @@ class UpdateUser:
             username=username,
             password_hash=password_hash,
             role=role,
+            active=active
         )

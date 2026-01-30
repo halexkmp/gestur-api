@@ -7,6 +7,7 @@ class User(models.Model):
     username = fields.CharField(max_length=255, unique=True)
     password_hash = fields.CharField(max_length=255)
     role = fields.CharEnumField(UserRole)
+    active = fields.BooleanField(default=True)
     created_at = fields.DatetimeField(auto_now_add=True)
     updated_at = fields.DatetimeField(auto_now=True)
 

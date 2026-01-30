@@ -11,6 +11,7 @@ class UpdateUserRepository:
         username: Optional[str] = None,
         password_hash: Optional[str] = None,
         role: Optional[UserRole] = None,
+        active: Optional[bool] = None
     ) -> Optional[User]:
         user = await User.get_or_none(id=user_id)
         if not user:
@@ -24,6 +25,8 @@ class UpdateUserRepository:
             update_data["password_hash"] = password_hash
         if role is not None:
             update_data["role"] = role
+        if active is not None:
+            update_data["active"] = active
         if update_data:
             await user.update_from_dict(update_data).save()
         return user

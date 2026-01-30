@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from app.shared.security.current_password import get_current_user
+from app.shared.security.current_user import get_current_user
 from app.slices.sales.list_sales.application.use_case import ListSales
 from app.slices.sales.list_sales.infra.repository import ListSalesRepository
 from app.slices.sales.list_sales.ui.schemas import SaleResponse

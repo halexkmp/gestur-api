@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from app.shared.security.current_password import get_current_user
+from app.shared.security.current_user import get_current_user
 from app.slices.users.get_me.ui.schemas import UserResponse
 
 router = APIRouter()
