@@ -1,6 +1,6 @@
-from typing import List, Optional
+from typing import Optional
 from uuid import UUID
-from datetime import date, datetime
+from datetime import datetime
 
 from app.slices.sales.create_sale.domain.rules import update_stock_by_sale
 from app.slices.sales.create_sale.infra.repository import CreateSaleRepository

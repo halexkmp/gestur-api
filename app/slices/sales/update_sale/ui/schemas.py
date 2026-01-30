@@ -15,6 +15,13 @@ class SalePaymentUpdate(BaseModel):
     amount: float
 
 
+class SaleResponse(BaseModel):
+    id: UUID
+    sale_code: str
+    class Config:
+        from_attributes = True
+
+
 class SaleUpdate(BaseModel):
     partner_id: Optional[UUID] = None
     status: Optional[SaleStatus] = None
