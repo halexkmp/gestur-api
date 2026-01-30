@@ -11,7 +11,14 @@ from app.slices.reports.urls import router as reports_router
 
 
 def create_app() -> FastAPI:
-    app = FastAPI(title="Gestur API", version="1.0.0")
+    is_production = settings.ENVIRONMENT == "production"
+    app = FastAPI(
+        title="Gestur API",
+        version="1.0.0",
+        docs_url=None if is_production else "/docs",
+        redoc_url=None if is_production else "/redoc",
+        openapi_url=None if is_production else "/openapi.json",
+    )
 
     app.add_middleware(
         CORSMiddleware,
