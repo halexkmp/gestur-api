@@ -9,6 +9,36 @@ from app.slices.sales.urls import router as sales_router
 from app.slices.partners.urls import router as partners_router
 from app.slices.reports.urls import router as reports_router
 
+# Optionally run Aerich migrations on startup
+async def run_migrations_on_startup():
+    if not settings.RUN_MIGRATIONS_ON_STARTUP:
+        return
+    try:
+        import sys
+        import asyncio
+
+        # Run `python -m aerich upgrade` to avoid conflicts with Tortoise init
+        proc = await asyncio.create_subprocess_exec(
+            sys.executable,
+            "-m",
+            "aerich",
+            "upgrade",
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+        )
+        stdout, stderr = await proc.communicate()
+        if proc.returncode != 0:
+            raise RuntimeError(
+                f"aerich upgrade failed with code {proc.returncode}: {stderr.decode().strip()}"
+            )
+        out = stdout.decode().strip()
+        if out:
+            print(out)
+        print("Aerich migrations applied on startup.")
+    except Exception as e:
+        # Fail fast so the deployment doesn't run with an out-of-date schema
+        print(f"Failed to run Aerich migrations on startup: {e}")
+        raise
 
 def create_app() -> FastAPI:
     app = FastAPI(title="Gestur API", version="1.0.0")
@@ -37,43 +67,12 @@ def create_app() -> FastAPI:
         add_exception_handlers=True,
     )
 
-    # Optionally run Aerich migrations on startup
-    @app.on_event("startup")
-    async def run_migrations_on_startup():
-        if not settings.RUN_MIGRATIONS_ON_STARTUP:
-            return
-        try:
-            import sys
-            import asyncio
-
-            # Run `python -m aerich upgrade` to avoid conflicts with Tortoise init
-            proc = await asyncio.create_subprocess_exec(
-                sys.executable,
-                "-m",
-                "aerich",
-                "upgrade",
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE,
-            )
-            stdout, stderr = await proc.communicate()
-            if proc.returncode != 0:
-                raise RuntimeError(
-                    f"aerich upgrade failed with code {proc.returncode}: {stderr.decode().strip()}"
-                )
-            out = stdout.decode().strip()
-            if out:
-                print(out)
-            print("Aerich migrations applied on startup.")
-        except Exception as e:
-            # Fail fast so the deployment doesn't run with an out-of-date schema
-            print(f"Failed to run Aerich migrations on startup: {e}")
-            raise
 
     return app
 
 
 app = create_app()
-
+app.add_event_handler("startup", run_migrations_on_startup)
 
 @app.get("/")
 async def root():

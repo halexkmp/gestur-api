@@ -2,9 +2,12 @@ from typing import List, Literal
 import os
 from pydantic import Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from dotenv import load_dotenv
 
 
 class Settings(BaseSettings):
+
+    load_dotenv()
     # Environment
     ENVIRONMENT: Literal["development", "production"] = Field(
         default=os.getenv("ENVIRONMENT", "development")
@@ -60,14 +63,7 @@ class Settings(BaseSettings):
             )
 
         # Allowed origins parsing: comma-separated string in env
-        origins_env = os.getenv("ALLOWED_ORIGINS")
-        if origins_env:
-            self.ALLOWED_ORIGINS = [
-                o.strip() for o in origins_env.split(",") if o.strip()
-            ]
-        else:
-            # Defaults per environment
-            self.ALLOWED_ORIGINS = ["*"] if not is_production else []
+        self.ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", ["*"])
 
         # Generate schemas only in development by default
         self.GENERATE_SCHEMAS = not is_production

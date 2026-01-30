@@ -1,5 +1,6 @@
 fastapi
 uvicorn
+gunicorn==23.0.0
 tortoise-orm
 aerich
 python-jose[cryptography]
