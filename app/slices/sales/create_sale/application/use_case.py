@@ -1,6 +1,7 @@
 from typing import Optional
 from uuid import UUID
 from datetime import datetime
+from tortoise.transactions import in_transaction
 
 from app.slices.sales.create_sale.domain.rules import update_stock_by_sale
 from app.slices.sales.create_sale.infra.repository import CreateSaleRepository
@@ -25,18 +26,20 @@ class CreateSale:
         )
 
         sale_code = "{}{}".format(user_id, datetime.now().strftime("%Y%m%d%H%M%S"))
-        sale = await self.repository.create(
-            sale_code=sale_code,
-            total_amount=total_amount,
-            user_id=user_id,
-            partner_id=partner_id,
-            items=items,
-            payments=payments,
-            notes=notes,
-            observations=observations,
-            partner_customer_shift=partner_customer_shift,
-            partner_customer_quantity=partner_customer_quantity
-        )
-        await update_stock_by_sale(sale)
+        async with in_transaction():
+            sale = await self.repository.createSale(
+                sale_code=sale_code,
+                total_amount=total_amount,
+                user_id=user_id,
+                partner_id=partner_id,
+                items=items,
+                payments=payments,
+                notes=notes,
+                observations=observations,
+                partner_customer_shift=partner_customer_shift,
+                partner_customer_quantity=partner_customer_quantity
+            )
+            stock_changes = await update_stock_by_sale(sale)
+            [await self.repository.update_product_stock(stock) for stock in stock_changes]
         return sale
 
