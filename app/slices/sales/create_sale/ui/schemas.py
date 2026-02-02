@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from uuid import UUID
 from typing import List, Optional
 from datetime import date
@@ -15,8 +15,8 @@ class SalePaymentCreate(BaseModel):
 
 class SaleCreate(BaseModel):
     partner_id: Optional[UUID] = None
-    items: List[SaleItemCreate]
-    payments: List[SalePaymentCreate]
+    items: List[SaleItemCreate] = Field(min_length=1)
+    payments: List[SalePaymentCreate] = Field(min_length=1)
     notes: Optional[str] = None
     observations: Optional[str] = None
     partner_customer_quantity: Optional[int] = None
