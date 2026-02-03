@@ -68,7 +68,7 @@ class SaleItem(models.Model):
 class SalePayment(models.Model):
     id = fields.UUIDField(pk=True)
     sale = fields.ForeignKeyField("models.Sale", related_name="payments")
-    payment_method = fields.CharEnumField(PaymentMethod)
+    payment_method = fields.CharEnumField(PaymentMethod, max_length=255)
     amount = fields.DecimalField(max_digits=10, decimal_places=2)
 
     class Meta:

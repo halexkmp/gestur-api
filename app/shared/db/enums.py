@@ -21,6 +21,7 @@ class PaymentMethod(str, Enum):
     PIX = "PIX"
     CURRENCY = "CURRENCY"
     CREDIT_CARD = "CREDIT_CARD"
+    BUSINESS_PARTNER = "BUSINESS_PARTNER"
 
 class PartnerCustomerShift(str, Enum):
     AFTERNOON = "AFTERNOON"
