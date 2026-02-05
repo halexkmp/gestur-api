@@ -6,10 +6,6 @@ from datetime import datetime
 
 from app.shared.db.enums import PartnerType
 
-class SaleResponse(BaseModel):
-    id: UUID
-    total_amount: float
-    created_at: datetime
 
 class PartnerResponse(BaseModel):
     id: UUID
@@ -17,7 +13,6 @@ class PartnerResponse(BaseModel):
     active: bool
     pix_key: Optional[str] = None
     type: PartnerType
-    sales: Optional[List[SaleResponse]] = None
     created_at: datetime
 
     class Config:
