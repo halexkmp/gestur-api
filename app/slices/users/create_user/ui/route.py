@@ -15,5 +15,5 @@ async def route(user_in: UserCreate, current_user=Depends(get_current_user)):
         name=user_in.name,
         username=user_in.username,
         password=user_in.password,
-        role=user_in.role,
+        roles=user_in.roles,
     )

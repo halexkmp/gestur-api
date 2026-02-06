@@ -21,4 +21,9 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
     user = await User.get_or_none(username=username)
     if user is None:
         raise credentials_exception
+    # Prefetch roles for authorization checks and serialization
+    try:
+        await user.fetch_related("roles")
+    except Exception:
+        pass
     return user

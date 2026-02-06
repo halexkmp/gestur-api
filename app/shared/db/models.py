@@ -1,12 +1,21 @@
 from tortoise import fields, models
 from app.shared.db.enums import UserRole, PartnerType, SaleStatus, PaymentMethod, PartnerCustomerShift, ProductType, StockChangeType
 
+class Role(models.Model):
+    id = fields.UUIDField(pk=True)
+    name = fields.CharEnumField(UserRole, unique=True)
+
+    class Meta:
+        table = "role"
+
 class User(models.Model):
     id = fields.UUIDField(pk=True)
     name = fields.CharField(max_length=255)
     username = fields.CharField(max_length=255, unique=True)
     password_hash = fields.CharField(max_length=255)
-    role = fields.CharEnumField(UserRole)
+    roles: fields.ManyToManyRelation[Role] = fields.ManyToManyField(
+        "models.Role", related_name="users", through="user_role"
+    )
     active = fields.BooleanField(default=True)
     created_at = fields.DatetimeField(auto_now_add=True)
     updated_at = fields.DatetimeField(auto_now=True)
