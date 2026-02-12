@@ -28,5 +28,5 @@ async def route(
         product_id=product_id,
         partner_id=partner_id,
         current_user_id = current_user.id,
-        current_user_role=current_user.role,
+        current_user_roles=[role__name for role__name in await current_user.roles],
     )

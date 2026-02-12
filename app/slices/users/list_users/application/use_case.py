@@ -9,5 +9,5 @@ class ListUsers:
     def __init__(self, repository: ListUsersRepository):
         self.repository = repository
 
-    async def execute(self, current_user: UserResponse) -> List[UserResponse]:
-        return await self.repository.list() if current_user.role == UserRole.ADMIN else [current_user]
+    async def execute(self, current_user, roles) -> List[UserResponse]:
+        return await self.repository.list() if UserRole.ADMIN in [role.name for role in roles] else [current_user]

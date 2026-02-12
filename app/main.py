@@ -8,6 +8,7 @@ from app.slices.products.urls import router as products_router
 from app.slices.sales.urls import router as sales_router
 from app.slices.partners.urls import router as partners_router
 from app.slices.reports.urls import router as reports_router
+from app.slices.permissions.urls import router as permissions_router
 
 
 def create_app() -> FastAPI:
@@ -35,6 +36,7 @@ def create_app() -> FastAPI:
     app.include_router(partners_router)
     app.include_router(sales_router)
     app.include_router(reports_router)
+    app.include_router(permissions_router)
 
     # Register Tortoise
     register_tortoise(
