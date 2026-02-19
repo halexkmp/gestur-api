@@ -1,5 +1,5 @@
 from typing import List
-from app.slices.permissions.list_roles.infra.repository import ListRolesRepository
+from app.slices.roles.list_roles.infra.repository import ListRolesRepository
 
 
 class ListRoles:

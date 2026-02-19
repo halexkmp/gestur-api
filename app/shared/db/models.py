@@ -47,6 +47,27 @@ class Partner(models.Model):
     class Meta:
         table = "partner"
 
+class Employee(models.Model):
+    id = fields.UUIDField(pk=True)
+    name = fields.CharField(max_length=255)
+    pix_key = fields.CharField(max_length=255, null=True)
+    salary = fields.DecimalField(max_digits=10, decimal_places=2)
+    active = fields.BooleanField(default=True)
+    created_at = fields.DatetimeField(auto_now_add=True)
+
+    class Meta:
+        table = "employee"
+
+class SalaryAdvance(models.Model):
+    id = fields.UUIDField(pk=True)
+    employee = fields.ForeignKeyField("models.Employee", related_name="salary_advances")
+    amount = fields.DecimalField(max_digits=10, decimal_places=2)
+    paid_at = fields.DateField()
+    note = fields.TextField(null=True)
+
+    class Meta:
+        table = "salary_advance"
+
 class Sale(models.Model):
     id = fields.UUIDField(pk=True)
     sale_code = fields.CharField(max_length=50)
