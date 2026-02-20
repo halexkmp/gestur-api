@@ -13,7 +13,7 @@ class GetSalarySummaryRepository:
             raise ValueError("Employee not found")
         # Sum advances in Python to avoid cross-db function differences
         amounts = await SalaryAdvance.filter(
-            employee_id=employee_id, paid_at__month=month, paid_at__year=year
+            employee_id=employee_id, created_at__month=month, created_at__year=year
         ).values_list("amount", flat=True)
         total = sum(Decimal(str(a)) for a in amounts) if amounts else Decimal("0")
         return employee, total

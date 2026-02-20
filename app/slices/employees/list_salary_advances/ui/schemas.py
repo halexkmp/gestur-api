@@ -1,15 +1,15 @@
 from pydantic import BaseModel
 from uuid import UUID
-from datetime import date
+from datetime import datetime
 from decimal import Decimal
 from typing import Optional, List
 
 
 class SalaryAdvanceItem(BaseModel):
     id: UUID
-    employee_id: UUID
     amount: Decimal
-    paid_at: date
+    employee_id: UUID
+    created_at: datetime
     note: Optional[str] = None
 
     class Config:

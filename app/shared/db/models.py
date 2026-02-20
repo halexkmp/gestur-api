@@ -62,7 +62,7 @@ class SalaryAdvance(models.Model):
     id = fields.UUIDField(pk=True)
     employee = fields.ForeignKeyField("models.Employee", related_name="salary_advances")
     amount = fields.DecimalField(max_digits=10, decimal_places=2)
-    paid_at = fields.DateField()
+    created_at = fields.DatetimeField(auto_now_add=True)
     note = fields.TextField(null=True)
 
     class Meta:

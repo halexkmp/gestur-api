@@ -7,6 +7,6 @@ def ensure_hr(current_user):
 
     Raises HTTP 403 if the role is missing.
     """
-    roles = getattr(current_user, "roles", []) or []
+    roles = current_user.roles
     if not any(getattr(r, "name", None) == UserRole.HUMAN_RESOURCES for r in roles):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden: HR role required")

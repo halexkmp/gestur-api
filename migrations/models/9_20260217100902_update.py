@@ -16,7 +16,7 @@ async def upgrade(db: BaseDBAsyncClient) -> str:
         CREATE TABLE IF NOT EXISTS "salary_advance" (
     "id" UUID NOT NULL PRIMARY KEY,
     "amount" DECIMAL(10,2) NOT NULL,
-    "paid_at" DATE NOT NULL,
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "note" TEXT,
     "employee_id" UUID NOT NULL REFERENCES "employee" ("id") ON DELETE CASCADE
 );
