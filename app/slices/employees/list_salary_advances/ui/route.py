@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from fastapi import APIRouter, Depends
 from typing import List, Optional
 from app.shared.security.current_user import get_current_user
@@ -11,12 +13,14 @@ use_case = ListSalaryAdvances(ListSalaryAdvancesRepository())
 
 @router.get("/salary-advances", response_model=List[SalaryAdvanceItem])
 async def route(
+    employee_id: Optional[UUID] = None,
     month: Optional[int] = None,
     year: Optional[int] = None,
     current_user=Depends(get_current_user),
 ):
     ensure_hr(current_user)
     return await use_case.execute(
+        employee_id=employee_id,
         month=month,
         year=year,
     )
