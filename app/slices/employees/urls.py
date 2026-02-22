@@ -6,6 +6,7 @@ from app.slices.employees.update_employee.ui.route import router as update_emplo
 from app.slices.employees.delete_employee.ui.route import router as delete_employee_router
 from app.slices.employees.create_salary_advance.ui.route import router as create_salary_advance_router
 from app.slices.employees.list_salary_advances.ui.route import router as list_salary_advances_router
+from app.slices.employees.delete_salary_advance.ui.route import router as delete_salary_advance_router
 from app.slices.employees.get_salary_summary.ui.route import router as get_salary_summary_router
 
 router = APIRouter(prefix="/employees", tags=["employees"])
@@ -17,5 +18,6 @@ router.include_router(delete_employee_router)
 router.include_router(get_salary_summary_router)
 router.include_router(create_salary_advance_router)
 router.include_router(list_salary_advances_router)
+router.include_router(delete_salary_advance_router)
 # Register the dynamic route last so it doesn't capture fixed paths like /salary-advances
 router.include_router(get_employee_router)

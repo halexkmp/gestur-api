@@ -37,15 +37,14 @@ class CreateSalaryAdvance:
         if not employee:
             raise ValueError("Employee not found")
 
-        # Normalize the starting next month to first day
-        start_month = date(advance_date.year, advance_date.month + 1, 1)
+        start_date = date(advance_date.year, advance_date.month, advance_date.day)
 
         advances: list[SalaryAdvance] = []
 
         async with in_transaction():
             new_amount = round(amount/Decimal(times), 2)
             for idx in range(times):
-                target_month = _add_months(start_month, idx)
+                target_month = _add_months(start_date, idx)
                 # Apply domain rule per month
                 await ensure_monthly_advances_do_not_exceed_salary(
                     employee=employee,

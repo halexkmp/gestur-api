@@ -21,6 +21,7 @@ async def route(employee_id: UUID, data: EmployeeUpdate, current_user=Depends(ge
             pix_key=data.pix_key,
             salary=data.salary,
             active=data.active,
+            start_date=data.start_date
         )
     except ValueError:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Employee not found")

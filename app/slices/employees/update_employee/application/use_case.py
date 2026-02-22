@@ -1,3 +1,4 @@
+from datetime import date
 from uuid import UUID
 from typing import Optional
 from app.slices.employees.update_employee.infra.repository import UpdateEmployeeRepository
@@ -13,6 +14,7 @@ class UpdateEmployee:
         pix_key: Optional[str] = None,
         salary: Optional[float] = None,
         active: Optional[bool] = None,
+        start_date: Optional[date] = None
     ):
         updated = await self.repository.update(
             employee_id=employee_id,
@@ -20,6 +22,7 @@ class UpdateEmployee:
             pix_key=pix_key,
             salary=salary,
             active=active,
+            start_date=start_date
         )
         if not updated:
             raise ValueError("Employee not found")

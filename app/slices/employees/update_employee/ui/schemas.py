@@ -17,6 +17,7 @@ class EmployeeResponse(BaseModel):
     pix_key: Optional[str]
     salary: float
     active: bool
+    start_date: date
 
     class Config:
         from_attributes = True

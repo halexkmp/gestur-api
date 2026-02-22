@@ -15,10 +15,6 @@ class ListSalaryAdvances:
         month: Optional[int] = None,
         year: Optional[int] = None,
     ):
-        if (month is None) ^ (year is None):
-            today = date.today()
-            month = month or today.month
-            year = year or today.year
         return await self.repository.list(
             employee_id=employee_id,
             month=month,
