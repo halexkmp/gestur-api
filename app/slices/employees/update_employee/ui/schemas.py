@@ -1,3 +1,4 @@
+from datetime import date
 from uuid import UUID
 
 from pydantic import BaseModel, Field
@@ -8,6 +9,7 @@ class EmployeeUpdate(BaseModel):
     pix_key: Optional[str] = Field(default=None, max_length=255)
     salary: Optional[float] = Field(default=None, ge=0)
     active: Optional[bool] = None
+    start_date: Optional[date] = None
 
 class EmployeeResponse(BaseModel):
     id: UUID

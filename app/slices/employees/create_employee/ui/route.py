@@ -18,4 +18,5 @@ async def route(data: CreateEmployeeRequest, current_user=Depends(get_current_us
         pix_key=data.pix_key,
         salary=data.salary,
         active=data.active,
+        start_date=data.start_date
     )

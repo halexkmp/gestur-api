@@ -1,3 +1,4 @@
+from datetime import date
 from uuid import UUID
 
 from pydantic import BaseModel
@@ -9,6 +10,8 @@ class EmployeeResponse(BaseModel):
     pix_key: Optional[str]
     salary: float
     active: bool
+    start_date: date
+
 
     class Config:
         from_attributes = True

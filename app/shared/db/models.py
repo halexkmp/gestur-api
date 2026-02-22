@@ -52,6 +52,7 @@ class Employee(models.Model):
     name = fields.CharField(max_length=255)
     pix_key = fields.CharField(max_length=255, null=True)
     salary = fields.DecimalField(max_digits=10, decimal_places=2)
+    start_date = fields.DateField(auto_now_add=True)
     active = fields.BooleanField(default=True)
     created_at = fields.DatetimeField(auto_now_add=True)
 
@@ -62,6 +63,7 @@ class SalaryAdvance(models.Model):
     id = fields.UUIDField(pk=True)
     employee = fields.ForeignKeyField("models.Employee", related_name="salary_advances")
     amount = fields.DecimalField(max_digits=10, decimal_places=2)
+    advance_date = fields.DateField()
     created_at = fields.DatetimeField(auto_now_add=True)
     note = fields.TextField(null=True)
 
