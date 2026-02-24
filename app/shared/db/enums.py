@@ -2,6 +2,8 @@ from enum import Enum
 
 class UserRole(str, Enum):
     ADMIN = "ADMIN"
+    MANAGER = "MANAGER"
+    HUMAN_RESOURCES = "HUMAN_RESOURCES"
     OPERATOR = "OPERATOR"
 
 class PartnerType(str, Enum):

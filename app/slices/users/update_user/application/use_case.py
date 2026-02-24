@@ -1,8 +1,9 @@
-from typing import Optional
+from typing import Optional, List
 from uuid import UUID
 from app.slices.users.update_user.infra.repository import UpdateUserRepository
 from app.slices.users.create_user.infra.password_hash_create import PasswordHashCreate
-from app.shared.db.enums import UserRole
+from app.slices.users.update_user.ui.schemas import RoleUpdate
+
 
 class UpdateUser:
     def __init__(self, repository: UpdateUserRepository, password_hash_creator: PasswordHashCreate):
@@ -15,7 +16,7 @@ class UpdateUser:
         name: Optional[str] = None,
         username: Optional[str] = None,
         password: Optional[str] = None,
-        role: Optional[UserRole] = None,
+        roles: Optional[List[RoleUpdate]] = None,
         active: Optional[bool] = None
     ):
         password_hash = None
@@ -26,6 +27,6 @@ class UpdateUser:
             name=name,
             username=username,
             password_hash=password_hash,
-            role=role,
+            roles=roles,
             active=active
         )

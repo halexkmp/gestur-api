@@ -17,6 +17,6 @@ async def route(user_id: UUID, user_in: UserUpdate, current_user=Depends(get_cur
         name=user_in.name,
         username=user_in.username,
         password=user_in.password,
-        role=user_in.role,
+        roles=user_in.roles,
         active=user_in.active
     )

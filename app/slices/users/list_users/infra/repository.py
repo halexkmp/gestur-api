@@ -3,4 +3,4 @@ from app.shared.db.models import User
 
 class ListUsersRepository:
     async def list(self) -> List[User]:
-        return await User.all()
+        return await User.all().prefetch_related("roles").order_by("name")

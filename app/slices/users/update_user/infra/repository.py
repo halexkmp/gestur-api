@@ -1,7 +1,6 @@
-from typing import Optional
+from typing import Optional, List
 from uuid import UUID
-from app.shared.db.models import User
-from app.shared.db.enums import UserRole
+from app.shared.db.models import User, Role
 
 class UpdateUserRepository:
     async def update(
@@ -10,7 +9,7 @@ class UpdateUserRepository:
         name: Optional[str] = None,
         username: Optional[str] = None,
         password_hash: Optional[str] = None,
-        role: Optional[UserRole] = None,
+        roles: Optional[List[Role]] = None,
         active: Optional[bool] = None
     ) -> Optional[User]:
         user = await User.get_or_none(id=user_id)
@@ -23,10 +22,12 @@ class UpdateUserRepository:
             update_data["username"] = username
         if password_hash is not None:
             update_data["password_hash"] = password_hash
-        if role is not None:
-            update_data["role"] = role
         if active is not None:
             update_data["active"] = active
         if update_data:
             await user.update_from_dict(update_data).save()
+        if roles is not None:
+            roles_instances = await Role.filter(id__in=[r.id for r in roles])
+            await user.roles.add(*roles_instances)
+        await user.fetch_related("roles")
         return user

@@ -11,4 +11,4 @@ use_case = ListUsers(ListUsersRepository())
 
 @router.get("/", response_model=List[UserResponse])
 async def route(current_user=Depends(get_current_user)):
-    return await use_case.execute(current_user)
+    return await use_case.execute(current_user, await current_user.roles)
