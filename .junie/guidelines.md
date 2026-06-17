@@ -349,3 +349,13 @@ Explicit parameters are a design rule, not a preference.
  Business rules are not in infra
 
  Shared is used only when justified
+
+# 9. Task Management Guidelines
+
+### Working with `docs/tasks.md`
+- Mark tasks as `[x]` when completed.
+- Maintain the existing structure and phases.
+- When adding new tasks, ensure they are linked to a requirement and a plan item:
+  - Format: `- [ ] T{phase}.{task_id}: Description (Plan: {plan_id}, Req: {req_id})`
+- Every modification to the task list must be reflected in the project progress.
+- Tasks should be as granular as possible, especially for vertical slices (splitting UI, Application, and Infra).

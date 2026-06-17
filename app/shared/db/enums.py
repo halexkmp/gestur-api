@@ -5,6 +5,7 @@ class UserRole(str, Enum):
     MANAGER = "MANAGER"
     HUMAN_RESOURCES = "HUMAN_RESOURCES"
     OPERATOR = "OPERATOR"
+    EMPLOYEE = "EMPLOYEE"
 
 class PartnerType(str, Enum):
     BUGGYMAN = "BUGGYMAN"
