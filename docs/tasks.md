@@ -11,6 +11,8 @@
     - [x] T2.1.1: UI: `ui/schemas.py` and `ui/route.py`
     - [x] T2.1.2: Application: `application/use_case.py`
     - [x] T2.1.3: Infra: `infra/repository.py`
+    - [x] T2.1.4: Implement business rule: max 4 records per day (Plan: 2.1, Req: 1)
+    - [x] T2.1.5: Implement business rule: min 1-minute interval (Plan: 2.1, Req: 1)
 - [x] T2.2: Implement `list_my_journeys` slice (Plan: 2.2, Req: 2, 5)
     - [x] T2.2.1: UI: `ui/schemas.py` and `ui/route.py`
     - [x] T2.2.2: Application: `application/use_case.py`
@@ -38,3 +40,4 @@
 - [x] T5.1: Write unit tests for journey use cases (Plan: 2.1, 2.2, 3.2)
 - [x] T5.2: Write integration tests for journey API endpoints (Plan: 2.1, 2.2, 3.1, 3.2, 3.3)
 - [x] T5.3: Verify soft delete behavior and audit logging for admin edits (Plan: 3.2, 3.3, Req: 3)
+- [x] T5.4: Test business rules for journey registration (max 4/day, 1min interval) (Plan: 2.1, Req: 1)

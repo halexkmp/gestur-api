@@ -11,6 +11,8 @@ The Journey Registry feature allows employees to record their work shifts by cap
   - WHEN the user clicks "Register Journey" THEN the system SHALL capture the current UTC timestamp and the device's latitude/longitude.
   - WHEN the location data is unavailable THEN the system SHALL prevent registration and display a clear error message.
   - WHEN the registry is successful THEN the system SHALL store the record associated with the authenticated user.
+  - WHEN the user attempts to register more than 4 records in the same day THEN the system SHALL prevent registration and return a clear error message.
+  - WHEN the user attempts to register a record within less than one minute of the previous record THEN the system SHALL prevent registration and return a clear error message.
 
 ### 2. Journey History Visualization
 - **User Story**: As an employee, I want to view my past journey records so that I can track my work hours.

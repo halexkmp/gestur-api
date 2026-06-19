@@ -13,6 +13,9 @@
 - **P1: Create Journey Registry Slice** (Requirement: 1, 5)
   - Path: `slices/journey/register_journey/`
   - Implement UI (POST), Application, and Infra.
+  - Implement business rules in Application layer:
+    - Max 4 records per user per day.
+    - Minimum 1-minute interval between records.
 - **P3: List Personal Journey History Slice** (Requirement: 2, 5)
   - Path: `slices/journey/list_my_journeys/`
   - Implement UI (GET), Application, and Infra.
