@@ -128,3 +128,16 @@ class Stock(models.Model):
 
     class Meta:
         table = "stock"
+
+class JourneyRegistry(models.Model):
+    id = fields.UUIDField(pk=True)
+    user = fields.ForeignKeyField("models.User", related_name="journeys")
+    timestamp = fields.DatetimeField(auto_now_add=True)
+    latitude = fields.FloatField()
+    longitude = fields.FloatField()
+    is_deleted = fields.BooleanField(default=False)
+    edit_reason = fields.TextField(null=True)
+    original_data = fields.JSONField(null=True) # To store previous values for auditing
+
+    class Meta:
+        table = "journey_registry"
