@@ -135,6 +135,7 @@ class JourneyRegistry(models.Model):
     timestamp = fields.DatetimeField(auto_now_add=True)
     latitude = fields.FloatField()
     longitude = fields.FloatField()
+    selfie_id = fields.CharField(max_length=500, null=True)
     is_deleted = fields.BooleanField(default=False)
     edit_reason = fields.TextField(null=True)
     original_data = fields.JSONField(null=True) # To store previous values for auditing

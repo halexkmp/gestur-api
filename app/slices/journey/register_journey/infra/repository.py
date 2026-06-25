@@ -4,11 +4,12 @@ from datetime import datetime, time
 from app.shared.db.models import JourneyRegistry
 
 class RegisterJourneyRepository:
-    async def create(self, user_id: UUID, latitude: float, longitude: float) -> JourneyRegistry:
+    async def create(self, user_id: UUID, latitude: float, longitude: float, selfie_id: Optional[str] = None) -> JourneyRegistry:
         return await JourneyRegistry.create(
             user_id=user_id,
             latitude=latitude,
-            longitude=longitude
+            longitude=longitude,
+            selfie_id=selfie_id
         )
 
     async def count_today_by_user(self, user_id: UUID) -> int:

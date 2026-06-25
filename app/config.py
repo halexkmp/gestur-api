@@ -22,6 +22,10 @@ class Settings(BaseSettings):
     # Database
     DATABASE_URL: str | None = Field(default=None)
 
+    # Vercel Blob
+    BLOB_STORE_ID: str | None = Field(default=os.getenv("BLOB_STORE_ID"))
+    BLOB_READ_WRITE_TOKEN: str | None = Field(default=os.getenv("BLOB_READ_WRITE_TOKEN"))
+
     # CORS
     ALLOWED_ORIGINS: List[str] = Field(default_factory=list)
 

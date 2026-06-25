@@ -37,4 +37,11 @@ The Journey Registry feature allows employees to record their work shifts by cap
 - **User Story**: As a system owner, I want to ensure that only authorized users can record journeys or edit them.
 - **Acceptance Criteria**:
   - WHEN a non-authenticated user attempts to access journey endpoints THEN the system SHALL return a 401 Unauthorized error.
-  - WHEN a non-admin user attempts to edit another user's journey THEN the system SHALL return a 403 Forbidden error.
+  - WHEN a non-admin user attempts to access another user's journey data THEN the system SHALL return a 403 Forbidden error.
+
+### 6. Selfie Proof Registration
+- **User Story**: As an employee, I want to provide a selfie when registering my journey so that my identity is verified.
+- **Acceptance Criteria**:
+  - WHEN registering a journey THEN the system SHALL require a selfie image.
+  - WHEN the selfie is provided THEN the system SHALL optimize the image (resize/compress) and store it in cloud storage.
+  - WHEN an admin lists journeys THEN the system SHALL provide the selfie reference for each record.

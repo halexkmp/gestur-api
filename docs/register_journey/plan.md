@@ -36,3 +36,12 @@
 - **P2: Role-Based Access Control Update** (Requirement: 4, 5)
   - Update user creation/update logic to support `EMPLOYEE` role.
   - Ensure security decorators/middlewares account for the new role and permissions.
+
+## 5. Journey Improvement: Selfie Proof
+- **P2: Selfie Proof Implementation** (Requirement: 6)
+  - Install dependencies: `vercel-blob`, `Pillow`.
+  - Update `JourneyRegistry` model to include `selfie_id`.
+  - Implement image optimization (resize to 800px, JPEG 70%) in `register_journey` application layer.
+  - Implement Vercel Blob upload in `register_journey` infra layer.
+  - Update `register_journey` UI to accept multipart/form-data.
+  - Update `admin_list_journeys` to return `selfie_id`.

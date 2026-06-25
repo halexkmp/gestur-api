@@ -41,3 +41,12 @@
 - [x] T5.2: Write integration tests for journey API endpoints (Plan: 2.1, 2.2, 3.1, 3.2, 3.3)
 - [x] T5.3: Verify soft delete behavior and audit logging for admin edits (Plan: 3.2, 3.3, Req: 3)
 - [x] T5.4: Test business rules for journey registration (max 4/day, 1min interval) (Plan: 2.1, Req: 1)
+
+## Phase 6: Selfie Proof Improvement
+- [x] T6.1: Setup dependencies (`vercel-blob`, `Pillow`) (Plan: 5, Req: 6)
+- [x] T6.2: Add `selfie_id` to `JourneyRegistry` model and run migration (Plan: 5, Req: 6)
+- [x] T6.3: Implement image optimization logic in `register_journey` application (Plan: 5, Req: 6)
+- [x] T6.4: Implement Vercel Blob upload in `register_journey` infra (Plan: 5, Req: 6)
+- [x] T6.5: Update `register_journey` UI to handle file upload (Plan: 5, Req: 6)
+- [x] T6.6: Update `admin_list_journeys` to return selfie ID (Plan: 5, Req: 6)
+- [ ] T6.7: Verify image optimization and upload (Plan: 5, Req: 6)
