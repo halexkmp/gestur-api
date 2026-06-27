@@ -11,11 +11,12 @@ class AdminListJourneysRepository:
         end_date: Optional[datetime] = None
     ) -> List[JourneyRegistry]:
         query = JourneyRegistry.all()
+        filters = {'is_deleted':False}
         if user_id:
-            query = query.filter(user_id=user_id)
+            filters["user_id"] = user_id
         if start_date:
-            query = query.filter(timestamp__gte=start_date)
+            filters["timestamp__gte"] = start_date
         if end_date:
-            query = query.filter(timestamp__lte=end_date)
+            filters["timestamp__lte"] = end_date
         
-        return await query.order_by("-timestamp")
+        return await query.filter(**filters).order_by("-timestamp")
