@@ -350,9 +350,29 @@ Explicit parameters are a design rule, not a preference.
 
  Shared is used only when justified
 
-# 9. Task Management Guidelines
+# 9. Task and Documentation Management Guidelines
 
-### Working with `docs/tasks.md`
+### Documentation Structure for Features
+Each new feature must have its own documentation folder inside `docs/`, named after the feature (`snake_case`).
+Every feature folder MUST contain:
+- `requirements.md`: User stories and acceptance criteria.
+- `plan.md`: Technical approach, architectural decisions, and phased implementation strategy.
+- `tasks.md`: Granular list of tasks following the Vertical Slice Architecture.
+
+Example:
+```
+docs/
+  register_journey/
+    requirements.md
+    plan.md
+    tasks.md
+  register_journey_selfie/
+    requirements.md
+    plan.md
+    tasks.md
+```
+
+### Working with `tasks.md`
 - Mark tasks as `[x]` when completed.
 - Maintain the existing structure and phases.
 - When adding new tasks, ensure they are linked to a requirement and a plan item:

@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from uuid import UUID
 from datetime import datetime
+from typing import Optional
 
 class RegisterJourneyRequest(BaseModel):
     latitude: float
@@ -12,6 +13,7 @@ class JourneyResponse(BaseModel):
     timestamp: datetime
     latitude: float
     longitude: float
+    selfie_id: Optional[str] = None
 
     class Config:
         from_attributes = True

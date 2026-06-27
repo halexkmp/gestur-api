@@ -5,6 +5,25 @@
       <option name="ignoredPackages">
         <list>
           <option value="uliweb-alembic" />
+          <option value="pytest" />
+          <option value="fastapi" />
+          <option value="uvicorn" />
+          <option value="gunicorn" />
+          <option value="tortoise-orm" />
+          <option value="aerich" />
+          <option value="python-jose" />
+          <option value="passlib" />
+          <option value="bcrypt" />
+          <option value="python-multipart" />
+          <option value="psycopg2-binary" />
+          <option value="pydantic-settings" />
+          <option value="python-dotenv" />
+          <option value="tomli" />
+          <option value="asyncpg" />
+          <option value="httpx" />
+          <option value="pytest-asyncio" />
+          <option value="vercel-blob" />
+          <option value="Pillow" />
         </list>
       </option>
     </inspection_tool>
