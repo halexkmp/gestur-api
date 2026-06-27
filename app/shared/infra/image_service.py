@@ -29,22 +29,12 @@ class ImageService:
         Downloads a selfie from Vercel Blob using its URL.
         Note: client.get() is available in the SDK to fetch blob content and metadata.
         """
-        try:
-            result = await self.client.get(selfie_url, access="private")
-            if result is None or result.status_code != 200:
-                return b""
-            
-            content = b""
-            async for chunk in result.stream:
-                content += chunk
-            return content
-        except Exception:
+        result = await self.client.get(selfie_url, access="private")
+        if result is None or result.status_code != 200:
+            return b""
+        return result.content
             # Fallback to direct httpx if SDK get fails or for compatibility
-            async with httpx.AsyncClient() as client:
-                resp = await client.get(selfie_url)
-                if resp.status_code == 200:
-                    return resp.content
-                return b""
+
 
     async def delete_selfie(self, selfie_url: str) -> None:
         """
