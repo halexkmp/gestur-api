@@ -16,4 +16,5 @@ asyncpg
 httpx
 pytest-asyncio
 vercel-blob
+vercel
 Pillow

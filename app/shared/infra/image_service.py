@@ -18,7 +18,7 @@ class ImageService:
         Uploads a selfie to Vercel Blob and returns the URL.
         """
         resp = await self.client.put(
-            f"images/{filename}",
+            f"{settings.BLOB_FOLDER}/{filename}",
             body=file_content,
             access="private"
         )
