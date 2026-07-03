@@ -1,381 +1,491 @@
 # Vertical Slice Architecture – Implementation Guide for New Features
 
-This guide defines **how to implement new features** in this project using the **Vertical Slice Architecture** adopted by the team.
+This guide defines how AI coding agents and developers must implement new features in this project using the adopted Vertical Slice Architecture.
 
-### The goal is to ensure
-- High cohesion
-- Explicit contracts
-- Minimal coupling
-- Clear separation of responsibilities
-- Pythonic and pragmatic design
-
-This document is intended to be consumed by **coding agents and developers**.
+The objective is to maximize consistency, predictability, maintainability, and code quality while minimizing architectural drift.
 
 ---
 
-## 1. Core Principles
+# Priority Order (Highest to Lowest)
 
-### Before writing code, **always validate these principles**
+When implementing a feature, always follow this priority order:
 
-- Each feature is **self-contained**
-- A feature owns its **UI, application, infra, and (optional) domain**
-- No generic `dict` objects crossing layers
-- Parameters must be **explicit**
-- Repositories only persist data
-- Business rules live in **application or domain**
-- HTTP concerns live only in **UI**
-- Shared modules (`shared/`) are allowed **only for stable, cross-cutting concerns**
+1. `requirements.md`
+2. `guidelines.md`
+3. Existing project patterns
+
+If any conflict exists, always follow the document with the highest priority.
 
 ---
 
-## 2. Feature Folder Structure
+# Mandatory Workflow
 
-### Each feature must live inside its slice and follow this structure
+For every new feature, ALWAYS follow this workflow.
 
+1. Read and fully understand `requirements.md`.
+2. Inspect the existing project to identify similar implementations.
+3. Reuse existing architectural patterns whenever possible.
+4. Create `plan.md`.
+5. Create `tasks.md`.
+6. Implement the feature following `tasks.md`.
+7. Mark tasks as completed (`[x]`) immediately after implementation.
+8. Do not implement requirements that are not described in `requirements.md`.
+
+Never skip any step.
+
+---
+
+# 1. Core Principles
+
+Before writing code, validate all of the following.
+
+- Each feature is self-contained.
+- A feature owns its own UI, Application, Infra and (optionally) Domain.
+- No generic dictionaries (`dict`) cross architectural layers.
+- Parameters must always be explicit.
+- Repositories only persist and retrieve data.
+- Business rules belong to the Application or Domain layer.
+- HTTP concerns belong exclusively to the UI layer.
+- Shared modules exist only for stable cross-cutting concerns.
+- Prefer consistency over introducing new abstractions.
+- Minimize the number of modified files.
+- Reuse existing implementations whenever possible.
+
+---
+
+# 2. Feature Folder Structure
+
+Each feature must follow this structure.
+
+```text
 slices/
-<context>/
-<feature_name>/
-    application/
-        use_case.py
-    ui/
-        route.py
-        schemas.py
-    infra/ # optional
-        repository.py
-    domain/ # optional
-        rules.py
+    <context>/
+        <feature_name>/
+            application/
+                use_case.py
+            ui/
+                route.py
+                schemas.py
+            infra/
+                repository.py
+            domain/
+                rules.py
+```
 
+## Naming Rules
 
-### Naming rules
-- Folder names: `snake_case`
-- Feature name should describe **one use case**
-- File names are **fixed and mandatory**
+- Folder names use `snake_case`.
+- Feature names describe a single business use case.
+- File names are fixed and must not be changed.
+- Keep naming consistent with the rest of the project.
 
 ---
 
-## 3. Layer Responsibilities
+# 3. Layer Responsibilities
 
-### 3.1 UI Layer (`ui/`)
+## 3.1 UI Layer (`ui/`)
 
-**Purpose**
-- Handle HTTP
-- Parse and validate input
-- Call the use case
-- Translate application errors into HTTP responses
+### Responsibilities
 
-**Allowed**
+- Handle HTTP requests.
+- Validate request payloads.
+- Convert HTTP requests into explicit use case parameters.
+- Translate application exceptions into HTTP responses.
+
+### Allowed
+
 - FastAPI
-- Pydantic schemas
+- Dependency Injection
+- Pydantic
 - HTTPException
-- Dependency injection
 
-**Forbidden**
-- ORM access
-- Business rules
+### Forbidden
+
+- ORM
 - Transactions
+- Business rules
+- SQL
 
-#### Files
+### Schemas
 
-##### `schemas.py`
-Defines request and response schemas.
+Schemas are HTTP contracts only.
 
-- Schemas are **UI contracts**
-- They must not leak into application or infra
+They must never leak into Application, Domain or Infra.
 
-### Example
-```python
-### class CreateProductRequest(BaseModel)
-    name: str
-    price: float
-    active: bool
+---
+
+## 3.2 Application Layer (`application/`)
+
+### Responsibilities
+
+- Represent one business action.
+- Coordinate repositories.
+- Execute business rules.
+- Control transactions when necessary.
+
+### Allowed
+
+- Domain rules
+- Repository usage
+- Application exceptions
+
+### Forbidden
+
+- HTTP
+- ORM implementation details
+- SQL
+- Pydantic schemas
+- Generic dictionaries
+
+### Rules
+
+- One Use Case = One business action.
+- Parameters must always be explicit.
+- Never use `dict`.
+- Never use `**kwargs`.
+- Never expose infrastructure details.
+
+---
+
+## 3.3 Domain Layer (`domain/`)
+
+Create this layer only when business logic is reusable or sufficiently complex.
+
+### Responsibilities
+
+- Pure business rules.
+- Business invariants.
+- Domain calculations.
+
+### Forbidden
+
+- ORM
+- FastAPI
+- HTTP
+- Database access
+- Framework imports
+
+---
+
+## 3.4 Infrastructure Layer (`infra/`)
+
+### Responsibilities
+
+- Execute database operations.
+- Persist entities.
+- Retrieve entities.
+
+### Allowed
+
+- ORM
+- Queries
+- Transactions
+- Shared database models
+
+### Forbidden
+
+- Business rules
+- HTTP logic
+- Validation
+- Request schemas
+
+Repositories must only persist and retrieve data.
+
+---
+
+# 4. Database Guidelines
+
+When introducing new persistence models:
+
+- Use UUID as the primary key.
+- Include `created_at`.
+- Include `updated_at`.
+- Prefer database constraints over application-only validation.
+- Create indexes for frequently queried columns.
+- Use `Decimal` for monetary values.
+- Avoid nullable fields unless required.
+
+---
+
+# 5. Shared Module Usage
+
+`shared/` exists only for stable cross-cutting concerns.
+
+Allowed:
+
+- ORM models
+- Enums
+- Constants
+- Database configuration
+- Utility functions shared by multiple features
+
+Forbidden:
+
+- Feature-specific use cases
+- Feature-specific business logic
+- UI schemas
+- Application services
+
+Rule:
+
+If it changes because business requirements change, it probably does not belong in `shared/`.
+
+---
+
+# 6. Error Handling
+
+UI
+
+- Converts exceptions into HTTP responses.
+
+Application
+
+- Raises business exceptions.
+
+Infrastructure
+
+- Never raises HTTP exceptions.
+
+Business exceptions should be meaningful and specific.
+
+---
+
+# 7. Dependency Direction (Non-Negotiable)
+
+Dependencies always flow in one direction.
+
+```text
+UI
+    ↓
+Application
+    ↓
+Domain (optional)
+    ↓
+Infrastructure
 ```
-File
-route.py
-
-Defines HTTP routes and adapters.
-
-UI calls the use case
-
-UI passes explicit parameters
-
-UI translates errors
-
-### Example
-
-@router.post("")
-### async def route(data: CreateProductRequest)
-    return await use_case.execute(
-        name=data.name,
-        price=data.price,
-        active=data.active,
-    )
-
-## 3.2 Application Layer (application/)
-
-Purpose
-
-Orchestrate the feature
-
-Define the system’s intention
-
-Coordinate domain rules and repositories
-
-Allowed
-
-Business rules
-
-Domain rule invocation
-
-Repository usage
-
-Forbidden
-
-HTTP concerns
-
-ORM specifics
-
-Pydantic schemas
-
-Generic dictionaries
-
-File
-use_case.py
-
-### Rules
-
-Parameters must be explicit
-
-No dict, **kwargs, or dynamic payloads
-
-Use case defines the true contract of the feature
-
-### Example
-
-### class CreateProduct
-###     def __init__(self, repository: CreateProductRepository)
-        self.repository = repository
-
-    async def execute(
-        self,
-        name: str,
-        price: float,
-        active: bool,
-###     )
-        return await self.repository.create(
-            name=name,
-            price=price,
-            active=active,
-        )
-
-## 3.3 Domain Layer (domain/) – Optional
-
-Purpose
-
-Encapsulate pure business rules
-
-Protect invariants
-
-Avoid duplication across use cases
-
-When to create
-
-Rule is complex
-
-Rule is reused
-
-Rule has no infrastructure dependency
-
-When NOT to create
-
-Rule is trivial
-
-Rule is specific to one use case
-
-Adds unnecessary indirection
-
-File
-rules.py
-
-### Rules
-
-No ORM
-
-No HTTP
-
-No framework imports
-
-### Example
-
-### def calculate_total(items: list) -> float
-    return sum(item.quantity * item.unit_price for item in items)
-
-## 3.4 Infra Layer (infra/)
-
-Purpose
-
-Persist data
-
-Talk to the database
-
-Implement repositories
-
-Allowed
-
-ORM
-
-Transactions
-
-Models from shared/db/models.py
-
-Forbidden
-
-Business decisions
-
-HTTP logic
-
-Input validation
-
-Schema knowledge
-
-File
-repository.py
-
-### Rules
-
-Repository receives explicit parameters
-
-Repository does not calculate business values
-
-Repository does not validate rules
-
-### Example
-
-### class CreateProductRepository
-    async def create(
-        self,
-        name: str,
-        price: float,
-        active: bool,
-###     )
-        return await Product.create(
-            name=name,
-            price=price,
-            active=active,
-        )
-
-# 4. Shared Module Usage (shared/)
-
-shared/ exists for stable, cross-cutting concerns.
-
-Allowed in shared
-
-ORM models
-
-Enums
-
-Database configuration
-
-Constants
-
-Forbidden in shared
-
-Use cases
-
-Feature-specific logic
-
-UI schemas
-
-Business rules tied to a single feature
-
-Rule
-
-If it changes with business logic, it does NOT belong in shared.
-
-# 5. Error Handling Rules
-
-UI raises HTTPException
-
-Application raises domain/application errors
-
-Infra never raises HTTP errors
-
-### Example
-
-### class ProductNotFoundError(Exception)
-    pass
-
-
-### UI translates
-
-### try
-    ...
-### except ProductNotFoundError
-    raise HTTPException(status_code=404)
-
-# 6. Dependency Direction (Non-Negotiable)
-UI → Application → (Domain) → Infra
-
 
 Reverse dependencies are forbidden.
 
-# 7. Explicitness Over Convenience
+---
 
-### ❌ This is forbidden
+# 8. Explicitness Over Convenience
 
-### async def execute(self, data: dict)
+Forbidden
 
+```python
+async def execute(data: dict)
+```
 
-### ✅ This is required
+Required
 
-### async def execute(self, name: str, price: float)
+```python
+async def execute(
+    partner_id: UUID,
+    amount: Decimal,
+    installments: int
+)
+```
 
+Explicit parameters are a design rule.
 
-Explicit parameters are a design rule, not a preference.
+---
 
-# 8. Definition of Done for a Feature
+# 9. Design Principles
 
-### A feature is complete only if
+Prefer:
 
- Has its own folder
+- Composition over inheritance.
+- Small classes.
+- Small functions.
+- Early returns.
+- Dependency injection.
+- Immutable data whenever practical.
+- Clear responsibilities.
 
- Uses fixed file names
+Avoid unnecessary abstraction.
 
- Has no generic dictionaries crossing layers
+---
 
- UI contains all HTTP logic
+# 10. Consistency First
 
- Repository contains only persistence logic
+When implementing a feature:
 
- Business rules are not in infra
+- Follow existing project patterns.
+- Do not introduce new architectural styles.
+- Do not create abstractions unless necessary.
+- Preserve naming conventions.
+- Keep modifications focused on the requested feature.
 
- Shared is used only when justified
+Consistency is preferred over cleverness.
 
-# 9. Task and Documentation Management Guidelines
+---
 
-### Documentation Structure for Features
-Each new feature must have its own documentation folder inside `docs/`, named after the feature (`snake_case`).
-Every feature folder MUST contain:
-- `requirements.md`: User stories and acceptance criteria.
-- `plan.md`: Technical approach, architectural decisions, and phased implementation strategy.
-- `tasks.md`: Granular list of tasks following the Vertical Slice Architecture.
+# 11. Missing Requirements
+
+If `requirements.md` does not define some behavior:
+
+1. Search for similar implementations.
+2. Reuse existing behavior when appropriate.
+3. If no precedent exists, document the assumption in `plan.md`.
+4. Do not invent complex business rules.
+
+---
+
+# 12. Performance Guidelines
+
+Avoid:
+
+- N+1 queries.
+- Repeated database access.
+- Loading unnecessary relationships.
+- Duplicate calculations.
+
+Prefer:
+
+- Bulk operations.
+- Database filtering.
+- Efficient queries.
+
+---
+
+# 13. Testing
+
+Every feature should include:
+
+- Unit tests.
+
+Tests are part of the implementation, not an optional task.
+
+---
+
+# 14. Migration Rules
+
+Whenever the database changes:
+
+- Do nothing. The migration will be handled by the migration tool manually
+
+---
+
+# 15. Documentation
+
+Each feature must have its own documentation folder.
+
+```text
+docs/
+    feature_name/
+        requirements.md
+        plan.md
+        tasks.md
+```
+
+---
+
+## requirements.md
+
+Written by the developer or another AI agent.
+
+Contains:
+
+- Business requirements.
+- Acceptance criteria.
+- Functional rules.
+- Non-functional requirements.
+
+Junie must treat this document as the source of truth.
+
+---
+
+## plan.md
+
+Must be created by Junie before implementation.
+
+It should describe:
+
+- Technical approach.
+- Architectural decisions.
+- Database changes.
+- API changes.
+- Validation strategy.
+- Implementation phases.
+- Risks or assumptions.
+
+The plan should be concise but sufficient to explain how the feature will be implemented.
+
+---
+
+## tasks.md
+
+Must also be created by Junie.
+
+Requirements:
+
+- Organize tasks by implementation phase.
+- Tasks must be as granular as practical.
+- Each task should represent one logical implementation step.
+- Use checkboxes.
 
 Example:
-```
-docs/
-  register_journey/
-    requirements.md
-    plan.md
-    tasks.md
-  register_journey_selfie/
-    requirements.md
-    plan.md
-    tasks.md
+
+```text
+## Phase 1 - Database
+
+- [ ] Create Loan model
+- [ ] Create LoanInstallment model
+- [ ] Create migration
+
+## Phase 2 - Infrastructure
+
+- [ ] Implement repository
+
+## Phase 3 - Application
+
+- [ ] Implement CreateLoanUseCase
+
+## Phase 4 - UI
+
+- [ ] Create endpoint
+- [ ] Create request schema
 ```
 
-### Working with `tasks.md`
-- Mark tasks as `[x]` when completed.
-- Maintain the existing structure and phases.
-- When adding new tasks, ensure they are linked to a requirement and a plan item:
-  - Format: `- [ ] T{phase}.{task_id}: Description (Plan: {plan_id}, Req: {req_id})`
-- Every modification to the task list must be reflected in the project progress.
-- Tasks should be as granular as possible, especially for vertical slices (splitting UI, Application, and Infra).
+During implementation, completed tasks must immediately become:
+
+```text
+- [x]
+```
+
+---
+
+# 16. Definition of Done
+
+A feature is complete only when:
+
+- Feature folder exists.
+- Vertical Slice Architecture is respected.
+- Explicit parameters are used.
+- Business rules are outside repositories.
+- Repository only performs persistence.
+- HTTP logic exists only in UI.
+- Tests were implemented.
+- Documentation was updated.
+- `plan.md` was created.
+- `tasks.md` was created.
+- All tasks are marked as completed.
+- Database migrations were created (when necessary).
+- No unrelated code was modified.
+
+---
+
+# 17. Don't Be Smart
+
+Unless explicitly requested:
+
+- Do not refactor unrelated code.
+- Do not rename files.
+- Do not rename classes.
+- Do not reorganize folders.
+- Do not optimize unrelated code.
+- Do not introduce new libraries.
+- Do not change coding style.
+- Do not change project architecture.
+
+Implement exactly what is requested in `requirements.md`.

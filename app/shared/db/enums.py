@@ -33,3 +33,8 @@ class PartnerCustomerShift(str, Enum):
 class StockChangeType(str, Enum):
     IN = "IN"
     OUT = "OUT"
+
+class LoanStatus(str, Enum):
+    ACTIVE = "ACTIVE"
+    PAID = "PAID"
+    CANCELED = "CANCELED"

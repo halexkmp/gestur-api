@@ -6,7 +6,7 @@ from app.slices.journey.update_journey.ui.route import router as update_router
 from app.slices.journey.delete_journey.ui.route import router as delete_router
 from app.slices.journey.get_selfie.ui.route import router as get_selfie_router
 
-router = APIRouter(prefix="/journey", tags=["Journey"])
+router = APIRouter(prefix="/journey", tags=["journey"])
 
 router.include_router(register_router)
 router.include_router(list_my_router)
