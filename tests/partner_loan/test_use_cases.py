@@ -90,7 +90,6 @@ async def test_create_loan_success(mock_in_transaction, mock_get_partner):
         partner_id=uuid4(),
         principal_amount=Decimal("1000.00"),
         interest_rate=Decimal("5.00"),
-        total_amount=Decimal("1050.00"),
         installments=2,
         due_day=15,
         start_date=date(2026, 1, 1),
@@ -129,15 +128,15 @@ async def test_create_loan_validation_failures(mock_get_partner):
 
     # Invalid principal amount
     with pytest.raises(ValueError, match="Principal amount must be greater than zero"):
-        await use_case.execute(partner_id, Decimal("-10.00"), Decimal("5.00"), Decimal("100.00"), 5, 10, date(2026,1,1), date(2026,6,1))
+        await use_case.execute(partner_id, Decimal("-10.00"), Decimal("5.00"), 5, 10, date(2026,1,1), date(2026,6,1))
 
     # Invalid interest rate
     with pytest.raises(ValueError, match="Interest rate cannot be negative"):
-        await use_case.execute(partner_id, Decimal("10.00"), Decimal("-1.00"), Decimal("100.00"), 5, 10, date(2026,1,1), date(2026,6,1))
+        await use_case.execute(partner_id, Decimal("10.00"), Decimal("-1.00"), 5, 10, date(2026,1,1), date(2026,6,1))
 
     # Invalid end_date before start_date
     with pytest.raises(ValueError, match="End date cannot be before start date"):
-        await use_case.execute(partner_id, Decimal("10.00"), Decimal("1.00"), Decimal("100.00"), 5, 10, date(2026,2,1), date(2026,1,1))
+        await use_case.execute(partner_id, Decimal("10.00"), Decimal("1.00"), 5, 10, date(2026,2,1), date(2026,1,1))
 
 @pytest.mark.asyncio
 async def test_get_loan_success():
@@ -187,11 +186,12 @@ async def test_update_loan_success():
     use_case = UpdateLoan(repo)
     updated_loan = await use_case.execute(
         loan_id=uuid4(),
-        total_amount=Decimal("600.00"),
+        principal_amount=Decimal("600.00"),
         status=LoanStatus.PAID
     )
     
-    assert updated_loan.total_amount == Decimal("600.00")
+    # 600.00 * (1 + 3.00 / 100) = 618.00
+    assert updated_loan.total_amount == Decimal("618.00")
     assert updated_loan.status == LoanStatus.PAID
     repo.save.assert_called_once_with(loan)
 

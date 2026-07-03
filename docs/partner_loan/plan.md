@@ -16,14 +16,12 @@ Group all feature slices under the new context directory `app/slices/partner_loa
 
 ### Slice 1: Create Loan (`POST /loans`)
 - **UI Layer**
-  - `ui/schemas.py`: Define `LoanCreateRequest` with strict Pydantic validations (`principal_amount > 0`, `due_day` between 1 and 28, etc.) and `LoanResponse`.
+  - `ui/schemas.py`: Define `LoanCreateRequest` with strict Pydantic validations (`principal_amount > 0`, `due_day` between 1 and 28, etc., with `total_amount` removed since it's calculated internally) and `LoanResponse`.
   - `ui/route.py`: Receive request, call use case, return response.
 - **Application Layer**
-  - `application/use_case.py`: Load partner, validate eligibility, execute rules, start database transaction, persist loan and installments.
+  - `application/use_case.py`: Load partner, validate eligibility, calculate total amount, execute rules, start database transaction, persist loan and installments.
 - **Domain Layer**
-  - `domain/rules.py`: Implement due date generator helper and partner eligibility checks.
-- **Infra Layer**
-  - `infra/repository.py`: Save loan and bulk insert generated installments.
+  - `domain/rules.py`: Implement due date generator helper and partner eligibility checks. Includes `calculate_total_amount` logic: `total_amount = round(principal_amount * (1 + interest_rate / 100), 2)`.
 
 ### Slice 2: Retrieve & List Loans (`GET /loans/{loan_id}`, `GET /loans`)
 - **Get Loan Slice**
@@ -32,7 +30,7 @@ Group all feature slices under the new context directory `app/slices/partner_loa
   - Query and return all loans in the database.
 
 ### Slice 3: Update Loan Metadata (`PUT /loans/{loan_id}`)
-- Update fields like `principal_amount`, `interest_rate`, `total_amount`, and dates, while leaving generated installments unchanged.
+- Update fields like `principal_amount`, `interest_rate`, and dates (with `total_amount` recalculated and updated if principal or interest rate is updated), while leaving generated installments unchanged.
 
 ### Slice 4: List Loan Installments (`GET /loans/{loan_id}/installments`)
 - Fetch and display all installments associated with the given loan, ordered sequentially by `installment_number`.

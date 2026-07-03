@@ -9,8 +9,7 @@ class LoanCreateRequest(BaseModel):
     partner_id: UUID
     principal_amount: Decimal = Field(gt=0)
     interest_rate: Decimal = Field(ge=0)
-    total_amount: Decimal = Field(gt=0)
-    installments: int = Field(gt=0)
+    installments_qty: int = Field(gt=0)
     due_day: int = Field(ge=1, le=28)
     start_date: date
     end_date: date
@@ -40,7 +39,8 @@ class LoanResponse(BaseModel):
     principal_amount: Decimal
     interest_rate: Decimal
     total_amount: Decimal
-    installments: int
+    installments_qty: int
+    installments: list[LoanInstallmentResponse]
     due_day: int
     start_date: date
     end_date: date

@@ -5,7 +5,7 @@ from typing import Optional
 from app.shared.db.enums import LoanStatus
 from app.shared.db.models import Loan
 from app.slices.partner_loan.update_loan.infra.repository import UpdateLoanRepository
-from app.slices.partner_loan.create_loan.domain.rules import validate_amount_dates
+from app.slices.partner_loan.create_loan.domain.rules import validate_amount_dates, calculate_total_amount
 
 class UpdateLoan:
     def __init__(self, repository: UpdateLoanRepository):
@@ -16,7 +16,6 @@ class UpdateLoan:
         loan_id: UUID,
         principal_amount: Optional[Decimal] = None,
         interest_rate: Optional[Decimal] = None,
-        total_amount: Optional[Decimal] = None,
         installments: Optional[int] = None,
         due_day: Optional[int] = None,
         start_date: Optional[date] = None,
@@ -30,7 +29,7 @@ class UpdateLoan:
         # Merge fields
         p_amount = principal_amount if principal_amount is not None else loan.principal_amount
         i_rate = interest_rate if interest_rate is not None else loan.interest_rate
-        t_amount = total_amount if total_amount is not None else loan.total_amount
+        t_amount = calculate_total_amount(p_amount, i_rate)
         inst = installments if installments is not None else loan.installments_qty
         d_day = due_day if due_day is not None else loan.due_day
         s_date = start_date if start_date is not None else loan.start_date

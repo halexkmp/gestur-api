@@ -1,7 +1,11 @@
 import calendar
 from datetime import date
+from decimal import Decimal
 from app.shared.db.enums import PartnerType
 from app.shared.db.models import Partner
+
+def calculate_total_amount(principal_amount: Decimal, interest_rate: Decimal) -> Decimal:
+    return round(principal_amount * (Decimal('1') + interest_rate / Decimal('100')), 2)
 
 def check_partner_eligibility(partner: Partner):
     if partner.type != PartnerType.BUGGYMAN:

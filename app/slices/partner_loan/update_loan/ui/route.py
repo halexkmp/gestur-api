@@ -16,7 +16,6 @@ async def route(loan_id: UUID, data: LoanUpdateRequest, current_user=Depends(get
             loan_id=loan_id,
             principal_amount=data.principal_amount,
             interest_rate=data.interest_rate,
-            total_amount=data.total_amount,
             installments=data.installments,
             due_day=data.due_day,
             start_date=data.start_date,

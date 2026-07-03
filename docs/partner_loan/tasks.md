@@ -31,3 +31,8 @@
 - [x] T6.1: Write unit tests for due date generation and partner eligibility rules
 - [x] T6.2: Write integration tests for all loan API endpoints
 - [x] T6.3: Run all tests to ensure full correctness
+
+## Phase 7: Refactor total_amount calculation (from UI to calculation)
+- [x] T7.1: Remove total_amount from CreateLoan UI schemas and calculate total_amount in domain/use_case
+- [x] T7.2: Remove total_amount from UpdateLoan UI schemas and calculate total_amount in use_case
+- [x] T7.3: Adjust unit/integration tests to match the new behavior

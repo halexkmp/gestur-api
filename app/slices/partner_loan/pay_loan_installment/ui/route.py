@@ -9,7 +9,7 @@ from app.slices.partner_loan.create_loan.ui.schemas import LoanInstallmentRespon
 router = APIRouter()
 use_case = PayLoanInstallment(PayLoanInstallmentRepository())
 
-@router.post("/{installment_id}/pay", response_model=LoanInstallmentResponse)
+@router.patch("/{installment_id}/pay", response_model=LoanInstallmentResponse)
 async def route(
     installment_id: UUID,
     data: PayInstallmentRequest = None,
