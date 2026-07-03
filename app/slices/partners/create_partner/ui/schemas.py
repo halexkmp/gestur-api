@@ -9,6 +9,7 @@ from app.shared.db.enums import PartnerType
 class PartnerCreate(BaseModel):
     name: str
     active: bool = True
+    type: PartnerType
     pix_key: Optional[str] = None
 
 class PartnerResponse(BaseModel):
