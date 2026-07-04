@@ -1,5 +1,5 @@
 from tortoise import fields, models
-from app.shared.db.enums import UserRole, PartnerType, SaleStatus, PaymentMethod, PartnerCustomerShift, ProductType, StockChangeType
+from app.shared.db.enums import UserRole, PartnerType, SaleStatus, PaymentMethod, PartnerCustomerShift, ProductType, StockChangeType, LoanStatus
 
 class Role(models.Model):
     id = fields.UUIDField(pk=True)
@@ -142,3 +142,33 @@ class JourneyRegistry(models.Model):
 
     class Meta:
         table = "journey_registry"
+
+class Loan(models.Model):
+    id = fields.UUIDField(pk=True)
+    partner = fields.ForeignKeyField("models.Partner", related_name="loans")
+    principal_amount = fields.DecimalField(max_digits=10, decimal_places=2)
+    interest_rate = fields.DecimalField(max_digits=5, decimal_places=2)
+    total_amount = fields.DecimalField(max_digits=10, decimal_places=2)
+    installments_qty = fields.IntField()
+    start_date = fields.DateField()
+    end_date = fields.DateField()
+    status = fields.CharEnumField(LoanStatus, default=LoanStatus.ACTIVE)
+    created_at = fields.DatetimeField(auto_now_add=True)
+    updated_at = fields.DatetimeField(auto_now=True)
+
+    class Meta:
+        table = "loan"
+
+class LoanInstallment(models.Model):
+    id = fields.UUIDField(pk=True)
+    loan = fields.ForeignKeyField("models.Loan", related_name="installments")
+    installment_number = fields.IntField()
+    amount = fields.DecimalField(max_digits=10, decimal_places=2)
+    due_date = fields.DateField()
+    payment_date = fields.DateField(null=True)
+    paid = fields.BooleanField(default=False)
+    created_at = fields.DatetimeField(auto_now_add=True)
+    updated_at = fields.DatetimeField(auto_now=True)
+
+    class Meta:
+        table = "loan_installment"

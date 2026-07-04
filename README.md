@@ -98,4 +98,4 @@ The project is configured for deployment on **Vercel** as a Python Serverless Fu
 
 ## 📄 Guidelines
 
-When contributing, please follow the [Vertical Slice Architecture Guide](.junie/guidelines.md) located in the `.junie` directory.
+When contributing, please follow the [Vertical Slice Architecture Guide](AGENTS.md) located in the `.junie` directory.
