@@ -3,7 +3,7 @@ from uuid import UUID
 from app.shared.security.current_user import get_current_user
 from app.slices.partner_loan.get_loan.application.use_case import GetLoan
 from app.slices.partner_loan.get_loan.infra.repository import GetLoanRepository
-from app.slices.partner_loan.create_loan.ui.schemas import LoanResponse
+from app.slices.partner_loan.get_loan.ui.schemas import LoanResponse
 
 router = APIRouter()
 use_case = GetLoan(GetLoanRepository())

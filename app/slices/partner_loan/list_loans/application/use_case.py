@@ -4,5 +4,5 @@ class ListLoans:
     def __init__(self, repository: ListLoansRepository):
         self.repository = repository
 
-    async def execute(self):
-        return await self.repository.list_all()
+    async def execute(self, partner_id: str):
+        return await self.repository.list_by_partner(partner_id)

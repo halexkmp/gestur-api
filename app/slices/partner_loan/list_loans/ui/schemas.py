@@ -5,13 +5,6 @@ from decimal import Decimal
 from typing import Optional
 from app.shared.db.enums import LoanStatus
 
-class LoanCreateRequest(BaseModel):
-    partner_id: UUID
-    principal_amount: Decimal = Field(gt=0)
-    interest_rate: Decimal = Field(ge=0)
-    installments_qty: int = Field(gt=0)
-    start_date: date
-
 class LoanResponse(BaseModel):
     id: UUID
     partner_id: UUID

@@ -75,4 +75,4 @@ class CreateLoan:
             # Save installments bulk
             await self.repository.save_installments(db_installments)
 
-        return saved_loan.fetch_related("installments")
+        return saved_loan

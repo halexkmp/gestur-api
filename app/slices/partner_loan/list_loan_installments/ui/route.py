@@ -4,7 +4,7 @@ from typing import List
 from app.shared.security.current_user import get_current_user
 from app.slices.partner_loan.list_loan_installments.application.use_case import ListLoanInstallments
 from app.slices.partner_loan.list_loan_installments.infra.repository import ListLoanInstallmentsRepository
-from app.slices.partner_loan.create_loan.ui.schemas import LoanInstallmentResponse
+from app.slices.partner_loan.list_loan_installments.ui.schemas import LoanInstallmentResponse
 
 router = APIRouter()
 use_case = ListLoanInstallments(ListLoanInstallmentsRepository())
