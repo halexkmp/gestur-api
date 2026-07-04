@@ -22,9 +22,7 @@ class CreateLoan:
         principal_amount: Decimal,
         interest_rate: Decimal,
         installments_qty: int,
-        due_day: int,
         start_date: date,
-        end_date: date,
     ) -> Loan:
         # 1. Load partner
         partner = await Partner.get_or_none(id=partner_id)
@@ -38,11 +36,11 @@ class CreateLoan:
         total_amount = calculate_total_amount(principal_amount, interest_rate)
 
         # 3. Validate amounts and dates
-        validate_amount_dates(due_day, end_date, installments_qty, interest_rate,
+        validate_amount_dates(installments_qty, interest_rate,
                               principal_amount, start_date, total_amount)
 
         # 4. Generate installment due dates
-        due_dates = generate_due_dates(start_date, due_day, installments_qty)
+        due_dates = generate_due_dates(start_date, installments_qty)
 
         # 5. Initialize Loan
         loan = Loan(
@@ -51,9 +49,8 @@ class CreateLoan:
             interest_rate=interest_rate,
             total_amount=total_amount,
             installments_qty=installments_qty,
-            due_day=due_day,
             start_date=start_date,
-            end_date=end_date,
+            end_date=due_dates[-1],
         )
 
         # 6. Save with transaction
@@ -78,4 +75,4 @@ class CreateLoan:
             # Save installments bulk
             await self.repository.save_installments(db_installments)
 
-        return saved_loan
+        return saved_loan.fetch_related("installments")

@@ -16,9 +16,7 @@ async def route(data: LoanCreateRequest, current_user=Depends(get_current_user))
             principal_amount=data.principal_amount,
             interest_rate=data.interest_rate,
             installments_qty=data.installments_qty,
-            due_day=data.due_day,
             start_date=data.start_date,
-            end_date=data.end_date,
         )
         return loan
     except ValueError as e:

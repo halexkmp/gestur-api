@@ -10,9 +10,7 @@ class LoanCreateRequest(BaseModel):
     principal_amount: Decimal = Field(gt=0)
     interest_rate: Decimal = Field(ge=0)
     installments_qty: int = Field(gt=0)
-    due_day: int = Field(ge=1, le=28)
     start_date: date
-    end_date: date
 
     @model_validator(mode='after')
     def validate_dates(self) -> 'LoanCreateRequest':
@@ -40,8 +38,7 @@ class LoanResponse(BaseModel):
     interest_rate: Decimal
     total_amount: Decimal
     installments_qty: int
-    installments: list[LoanInstallmentResponse]
-    due_day: int
+    # installments: list[LoanInstallmentResponse]
     start_date: date
     end_date: date
     status: LoanStatus

@@ -150,7 +150,6 @@ class Loan(models.Model):
     interest_rate = fields.DecimalField(max_digits=5, decimal_places=2)
     total_amount = fields.DecimalField(max_digits=10, decimal_places=2)
     installments_qty = fields.IntField()
-    due_day = fields.IntField()
     start_date = fields.DateField()
     end_date = fields.DateField()
     status = fields.CharEnumField(LoanStatus, default=LoanStatus.ACTIVE)
