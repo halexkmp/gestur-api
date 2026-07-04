@@ -5,6 +5,8 @@ from app.slices.partner_loan.list_loans.ui.route import router as list_loans_rou
 from app.slices.partner_loan.update_loan.ui.route import router as update_loan_router
 from app.slices.partner_loan.list_loan_installments.ui.route import router as list_installments_router
 from app.slices.partner_loan.pay_loan_installment.ui.route import router as pay_installment_router
+from app.slices.partner_loan.register_payment.ui.route import router as register_payment_router
+from app.slices.partner_loan.list_payments.ui.route import router as list_payments_router
 
 router = APIRouter()
 
@@ -17,6 +19,8 @@ loans_router.include_router(list_installments_router)
 
 installments_router = APIRouter(prefix="/loan-installments", tags=["loan-installments"])
 installments_router.include_router(pay_installment_router)
+installments_router.include_router(register_payment_router)
+installments_router.include_router(list_payments_router)
 
 router.include_router(loans_router)
 router.include_router(installments_router)

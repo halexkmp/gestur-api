@@ -3,6 +3,7 @@ from uuid import UUID
 from datetime import date
 from tortoise.transactions import in_transaction
 
+from app.shared.db.enums import LoanInstallmentStatus
 from app.shared.db.models import Partner, Loan, LoanInstallment
 from app.slices.partner_loan.create_loan.infra.repository import CreateLoanRepository
 from app.slices.partner_loan.create_loan.domain.rules import (
@@ -68,7 +69,7 @@ class CreateLoan:
                         installment_number=i,
                         amount=installment_amount,
                         due_date=due_dates[i - 1],
-                        paid=False,
+                        status=LoanInstallmentStatus.PENDING,
                     )
                 )
             

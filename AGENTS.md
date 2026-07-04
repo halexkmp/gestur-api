@@ -350,12 +350,7 @@ Prefer:
 
 # 13. Testing
 
-Every feature should include:
-
-- Unit tests.
-
-Tests are part of the implementation, not an optional task.
-
+- NOT CREATE ANY TEST
 ---
 
 # 14. Migration Rules

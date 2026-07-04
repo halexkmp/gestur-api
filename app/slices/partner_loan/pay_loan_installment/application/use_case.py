@@ -1,6 +1,7 @@
 from datetime import date
 from uuid import UUID
 from typing import Optional
+from app.shared.db.enums import LoanInstallmentStatus
 from app.slices.partner_loan.pay_loan_installment.infra.repository import PayLoanInstallmentRepository
 
 class PayLoanInstallment:
@@ -12,7 +13,7 @@ class PayLoanInstallment:
         if not installment:
             raise ValueError("Installment not found")
 
-        installment.paid = True
+        installment.status = LoanInstallmentStatus.PAID
         installment.payment_date = payment_date if payment_date is not None else date.today()
 
         await self.repository.save(installment)

@@ -38,3 +38,8 @@ class LoanStatus(str, Enum):
     ACTIVE = "ACTIVE"
     PAID = "PAID"
     CANCELED = "CANCELED"
+
+class LoanInstallmentStatus(str, Enum):
+    PENDING = "PENDING"
+    PARTIALLY_PAID = "PARTIALLY_PAID"
+    PAID = "PAID"

@@ -1,5 +1,5 @@
 from tortoise import fields, models
-from app.shared.db.enums import UserRole, PartnerType, SaleStatus, PaymentMethod, PartnerCustomerShift, ProductType, StockChangeType, LoanStatus
+from app.shared.db.enums import UserRole, PartnerType, SaleStatus, PaymentMethod, PartnerCustomerShift, ProductType, StockChangeType, LoanStatus, LoanInstallmentStatus
 
 class Role(models.Model):
     id = fields.UUIDField(pk=True)
@@ -166,9 +166,21 @@ class LoanInstallment(models.Model):
     amount = fields.DecimalField(max_digits=10, decimal_places=2)
     due_date = fields.DateField()
     payment_date = fields.DateField(null=True)
-    paid = fields.BooleanField(default=False)
+    status = fields.CharEnumField(LoanInstallmentStatus, default=LoanInstallmentStatus.PENDING)
     created_at = fields.DatetimeField(auto_now_add=True)
     updated_at = fields.DatetimeField(auto_now=True)
 
     class Meta:
         table = "loan_installment"
+
+class LoanInstallmentPayment(models.Model):
+    id = fields.UUIDField(pk=True)
+    loan_installment = fields.ForeignKeyField("models.LoanInstallment", related_name="payments")
+    amount = fields.DecimalField(max_digits=10, decimal_places=2)
+    payment_date = fields.DateField()
+    notes = fields.TextField(null=True)
+    created_at = fields.DatetimeField(auto_now_add=True)
+    updated_at = fields.DatetimeField(auto_now=True)
+
+    class Meta:
+        table = "loan_installment_payment"
