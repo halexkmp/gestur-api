@@ -3,7 +3,7 @@ from uuid import UUID
 from datetime import datetime, date
 from decimal import Decimal
 from typing import Optional
-from app.shared.db.enums import LoanStatus
+from app.shared.db.enums import LoanStatus, LoanInstallmentStatus
 
 
 class LoanInstallmentResponse(BaseModel):
@@ -12,7 +12,7 @@ class LoanInstallmentResponse(BaseModel):
     amount: Decimal
     due_date: date
     payment_date: Optional[date] = None
-    paid: bool
+    status: LoanInstallmentStatus
     created_at: datetime
     updated_at: datetime
 
