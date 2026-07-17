@@ -1,6 +1,31 @@
 <!--
 Sync Impact Report
 ==================
+Version change: 1.1.0 → 1.2.0 (minor: new material requirement added to Principle III and
+  Development Workflow & Quality Gates — the standing API contract in `specs/api/`)
+Modified principles:
+  - III. Documentation-First Feature Development — added the `specs/api/` standing API
+    contract requirement: any change to a route, request/response schema, permission guard,
+    or shared enum under `app/slices/`/`app/shared/db/enums.py` MUST update the matching
+    `specs/api/<context>.md` (and `shared.md` for enums) in the same change. This is
+    separate from the per-feature `specs/<NNN-feature-name>/` Spec Kit workflow: `specs/api/`
+    is a living mirror of the current API surface, not a point-in-time feature spec.
+Changed: Development Workflow & Quality Gates now includes `specs/api/` sync as a
+  completion gate alongside the per-feature spec/plan/tasks gate.
+Added sections: none
+Removed sections: none
+Templates requiring updates:
+  - CLAUDE.md ✅ updated — new "API contract (specs/api/)" section plus a "Notable
+    constraints" bullet
+  - README.md ✅ updated — Project Structure now lists `specs/api/`
+  - .claude/skills/update-api-contract/SKILL.md ✅ added — audits/syncs `specs/api/`
+    against `app/slices/`
+Follow-up TODOs: none
+-->
+
+<!--
+Sync Impact Report (v1.1.0, superseded by the entry above)
+==================
 Version change: 1.0.1 → 1.1.0 (minor: documentation workflow redefined, materially changes
   Principle III and part of Development Workflow & Quality Gates)
 Modified principles:
@@ -85,10 +110,22 @@ priority is: `spec.md` > `plan.md` > existing project patterns. Behavior not des
 `spec.md` MUST NOT be implemented without first surfacing the gap and getting explicit
 confirmation.
 
+Independently of the per-feature Spec Kit workflow, `specs/api/` is a standing API
+contract — one file per context, mirroring the API surface consumed by the separate
+frontend project. It is not a point-in-time feature spec; it MUST always match
+`app/slices/` exactly. Any change to a route path/method, request/response schema field,
+query/path parameter, role/permission guard, non-default status code, or shared enum
+(`app/shared/db/enums.py`) MUST update the matching `specs/api/<context>.md` (and
+`specs/api/shared.md` for enums) in the same change, regardless of whether the change came
+from `/speckit-implement` or an ad hoc edit. A new `<context>` slice requires a new
+`specs/api/<context>.md`.
+
 Rationale: Keeps intent traceable as the number of slices grows, and prevents scope creep
 disguised as reasonable inference. This project previously used an ad hoc `docs/<feature>/`
 convention (`requirements.md`/`plan.md`/`tasks.md`); that legacy folder was removed once
-Spec Kit was adopted as the single documentation workflow.
+Spec Kit was adopted as the single documentation workflow. `specs/api/` was added
+separately because the frontend project needs an always-current contract, not a per-feature
+snapshot scattered across many `specs/<NNN-feature-name>/` folders.
 
 ### IV. Consistency Over Cleverness
 
@@ -133,8 +170,9 @@ A feature is complete only when: the vertical-slice folder structure is respecte
 explicit typed parameters are used throughout the application layer, business rules live
 outside repositories, HTTP logic exists only in `ui/`, the feature's
 `specs/<NNN-feature-name>/spec.md`, `plan.md`, and `tasks.md` all exist with every task
-checked off, database migrations were generated when models changed, and no unrelated code
-was modified. Automated tests MUST NOT be added for new feature work — this is this
+checked off, the matching `specs/api/<context>.md` (and `shared.md` if enums changed)
+reflects every route/schema/permission change made, database migrations were generated
+when models changed, and no unrelated code was modified. Automated tests MUST NOT be added for new feature work — this is this
 project's explicit, current policy and it overrides any generic "tests are OPTIONAL, only
 if requested" default from tooling templates. If a task appears to require tests to be
 verifiable, surface that tension to the user rather than silently adding or silently
@@ -155,4 +193,4 @@ change meaning. Every feature's `plan.md` and any code review SHOULD verify comp
 with these principles; unjustified complexity or deviation must be called out explicitly
 in `plan.md`'s Complexity Tracking section rather than introduced silently.
 
-**Version**: 1.1.0 | **Ratified**: 2026-07-17 | **Last Amended**: 2026-07-17
+**Version**: 1.2.0 | **Ratified**: 2026-07-17 | **Last Amended**: 2026-07-17
