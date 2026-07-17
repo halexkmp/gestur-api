@@ -70,8 +70,17 @@ app/slices/<context>/<feature_name>/
 
 Features are specified using [Spec Kit](https://github.com/github/spec-kit): `/speckit-specify` → `/speckit-plan` → `/speckit-tasks`, writing to `specs/<NNN-feature-name>/` (`spec.md`, `plan.md`, `tasks.md`, plus `research.md`/`data-model.md`/`contracts/` from the plan phase). `spec.md` is the source of truth for a feature's requirements and takes priority over existing code patterns when there is a conflict. Implement via `/speckit-implement`.
 
+## API contract (specs/api/)
+
+`specs/api/` is the standing API contract consumed by the separate frontend project — one file per context (`auth.md`, `users.md`, `employees.md`, `journey.md`, `loans.md`, `partners.md`, `products.md`, `reports.md`, `sales.md`, `roles.md`), plus `shared.md` for cross-cutting auth/error/enum/type conventions. Unlike `specs/<NNN-feature-name>/`, which documents one feature's intent at a point in time, `specs/api/` is a living mirror of the current API surface and MUST always match `app/slices/` exactly.
+
+**This update is mandatory, not optional:** any change to a route path/method, request or response schema field, query/path parameter, role/permission guard, non-default status code, or shared enum in `app/shared/db/enums.py` MUST update the matching `specs/api/<context>.md` (and `shared.md` for enums) in the same change — whether the change came from `/speckit-implement` or an ad hoc edit. A slice change is not complete until its contract file reflects it. Adding a brand-new `<context>` slice requires adding a new `specs/api/<context>.md`.
+
+Use the `update-api-contract` skill to audit and sync `specs/api/` against the actual routes/schemas after making these kinds of changes.
+
 ## Notable constraints
 
+- **Keep `specs/api/` in sync.** Every route/schema/permission/enum change touching `app/slices/` MUST update the corresponding `specs/api/<context>.md` in the same change — see "API contract" above.
 - **Do not write tests.** Tests are not to be created for new features, despite `pytest`/`pytest-asyncio` being installed dependencies — this is an explicit, current project policy (see `.specify/memory/constitution.md`).
 - Never use `dict` or `**kwargs` as use-case parameters — parameters must be explicit and typed.
 - Don't refactor, rename, or reorganize unrelated code; keep changes scoped to the requested feature ("Don't Be Smart" section).

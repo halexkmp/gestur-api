@@ -51,6 +51,7 @@ Common logic and shared models live in `app/shared/`.
   - `shared/`: Database models, enums, security, and utilities.
   - `slices/`: Feature-based vertical slices.
 - `specs/`: Per-feature spec, plan, and tasks documents (managed via Spec Kit — `/speckit-specify`, `/speckit-plan`, `/speckit-tasks`).
+  - `specs/api/`: The standing API contract for the frontend project, one file per context — kept in sync with `app/slices/` on every route/schema change (see `CLAUDE.md`).
 - `migrations/`: Aerich database migration files.
 - `tests/`: Unit and integration tests.
 
