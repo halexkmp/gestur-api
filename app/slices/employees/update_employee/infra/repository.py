@@ -11,7 +11,9 @@ class UpdateEmployeeRepository:
         pix_key: Optional[str] = None,
         salary: Optional[float] = None,
         active: Optional[bool] = None,
-        start_date: Optional[date] = None
+        start_date: Optional[date] = None,
+        user_id: Optional[UUID] = None,
+        clear_user: bool = False
     ):
         employee = await Employee.get_or_none(id=employee_id)
         if not employee:
@@ -26,5 +28,9 @@ class UpdateEmployeeRepository:
             employee.active = active
         if start_date is not None:
             employee.start_date = start_date
+        if clear_user:
+            employee.user_id = None
+        elif user_id is not None:
+            employee.user_id = user_id
         await employee.save()
         return employee

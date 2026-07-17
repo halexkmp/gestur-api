@@ -10,6 +10,7 @@ class CreateEmployeeRequest(BaseModel):
     salary: float = Field(..., ge=0)
     active: bool = True
     start_date: date
+    user_id: Optional[UUID] = None
 
 class EmployeeResponse(BaseModel):
     id: UUID
@@ -18,6 +19,7 @@ class EmployeeResponse(BaseModel):
     salary: float
     active: bool
     start_date: date
+    user_id: Optional[UUID]
 
     class Config:
         from_attributes = True

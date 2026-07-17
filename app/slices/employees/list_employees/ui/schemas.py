@@ -11,6 +11,7 @@ class EmployeeResponse(BaseModel):
     salary: float
     active: bool
     start_date: date
+    user_id: Optional[UUID]
 
     class Config:
         from_attributes = True

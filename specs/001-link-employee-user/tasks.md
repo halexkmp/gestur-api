@@ -43,8 +43,8 @@ create, edit, or view the association.
 
 **⚠️ CRITICAL**: No user story task can begin until this phase is complete.
 
-- [ ] T001 Add a nullable, unique `user` foreign key field to the `Employee` model in `app/shared/db/models.py`: `user = fields.ForeignKeyField("models.User", related_name="employee", null=True, unique=True)` (per data-model.md and research.md Decision 1)
-- [ ] T002 Generate and apply the Aerich migration for the new field (`aerich migrate`, then `aerich upgrade`) — do not hand-author the migration file (depends on T001)
+- [X] T001 Add a nullable, unique `user` foreign key field to the `Employee` model in `app/shared/db/models.py`: `user = fields.ForeignKeyField("models.User", related_name="employee", null=True, unique=True)` (per data-model.md and research.md Decision 1)
+- [X] T002 Generate and apply the Aerich migration for the new field (`aerich migrate`, then `aerich upgrade`) — do not hand-author the migration file (depends on T001)
 
 **Checkpoint**: `Employee` rows can now store an optional, unique link to a `User`. User story implementation can begin.
 
@@ -62,11 +62,11 @@ create response alone (see quickstart.md Scenarios 1-4).
 
 ### Implementation for User Story 1
 
-- [ ] T003 [P] [US1] Add `user_id: Optional[UUID] = None` to `CreateEmployeeRequest` and `user_id: Optional[UUID]` to `EmployeeResponse` in `app/slices/employees/create_employee/ui/schemas.py`
-- [ ] T004 [P] [US1] Add a `user_id: UUID | None = None` parameter to `CreateEmployee.execute` in `app/slices/employees/create_employee/application/use_case.py`: when provided, look up the `User` (`User.get_or_none(id=user_id)`) and raise `ValueError("User not found")` if absent, then check no other `Employee` already references it (`Employee.get_or_none(user_id=user_id)`) and raise `ValueError("User is already linked to another employee")` if found, before delegating to the repository (per research.md Decision 3)
-- [ ] T005 [P] [US1] Add a `user_id: UUID | None = None` parameter to `CreateEmployeeRepository.create` in `app/slices/employees/create_employee/infra/repository.py`, passing it through to `Employee.create(...)`
-- [ ] T006 [US1] Update `app/slices/employees/create_employee/ui/route.py` to pass `user_id=data.user_id` into the use case call, and catch `ValueError` mapping "not found" messages to `404` and any other message to `400` (mirror `app/slices/partner_loan/create_loan/ui/route.py`'s existing pattern); depends on T003, T004, T005
-- [ ] T007 [P] [US1] Update the `POST /employees/` section of `specs/api/employees.md` to document the new optional `user_id` request field, the `user_id` response field, and the `404`/`400` error cases (per contracts/employees.md)
+- [X] T003 [P] [US1] Add `user_id: Optional[UUID] = None` to `CreateEmployeeRequest` and `user_id: Optional[UUID]` to `EmployeeResponse` in `app/slices/employees/create_employee/ui/schemas.py`
+- [X] T004 [P] [US1] Add a `user_id: UUID | None = None` parameter to `CreateEmployee.execute` in `app/slices/employees/create_employee/application/use_case.py`: when provided, look up the `User` (`User.get_or_none(id=user_id)`) and raise `ValueError("User not found")` if absent, then check no other `Employee` already references it (`Employee.get_or_none(user_id=user_id)`) and raise `ValueError("User is already linked to another employee")` if found, before delegating to the repository (per research.md Decision 3)
+- [X] T005 [P] [US1] Add a `user_id: UUID | None = None` parameter to `CreateEmployeeRepository.create` in `app/slices/employees/create_employee/infra/repository.py`, passing it through to `Employee.create(...)`
+- [X] T006 [US1] Update `app/slices/employees/create_employee/ui/route.py` to pass `user_id=data.user_id` into the use case call, and catch `ValueError` mapping "not found" messages to `404` and any other message to `400` (mirror `app/slices/partner_loan/create_loan/ui/route.py`'s existing pattern); depends on T003, T004, T005
+- [X] T007 [P] [US1] Update the `POST /employees/` section of `specs/api/employees.md` to document the new optional `user_id` request field, the `user_id` response field, and the `404`/`400` error cases (per contracts/employees.md)
 
 **Checkpoint**: User Story 1 is fully functional and independently testable/deployable as an MVP.
 
@@ -85,11 +85,11 @@ Scenarios 5-7).
 
 ### Implementation for User Story 2
 
-- [ ] T008 [P] [US2] Add `user_id: Optional[UUID] = None` to `EmployeeUpdate` and `user_id: Optional[UUID]` to `EmployeeResponse` in `app/slices/employees/update_employee/ui/schemas.py`
-- [ ] T009 [P] [US2] Add `user_id: Optional[UUID] = None` and `clear_user: bool = False` parameters to `UpdateEmployee.execute` in `app/slices/employees/update_employee/application/use_case.py`: if `clear_user` is true, clear the association; else if `user_id` is provided, validate it the same way as T004 (excluding the employee being edited from the uniqueness check, e.g. `Employee.exclude(id=employee_id).get_or_none(user_id=user_id)`) before delegating to the repository (per research.md Decisions 2 and 3)
-- [ ] T010 [P] [US2] Add `user_id: Optional[UUID] = None` and `clear_user: bool = False` parameters to `UpdateEmployeeRepository.update` in `app/slices/employees/update_employee/infra/repository.py`: set `employee.user_id = None` when `clear_user` is true, else set `employee.user = user` (the validated instance) when `user_id is not None`, leaving the field untouched otherwise
-- [ ] T011 [US2] Update `app/slices/employees/update_employee/ui/route.py` to derive `clear_user = "user_id" in data.model_fields_set and data.user_id is None`, pass `user_id=data.user_id, clear_user=clear_user` into the use case call, and extend the existing `except ValueError` block so only the employee-not-found case maps to `404` with its current message while new "User not found" messages map to `404` and any other message (e.g. the duplicate-link case) maps to `400` (mirror `partner_loan/create_loan`'s branching pattern); depends on T008, T009, T010
-- [ ] T012 [P] [US2] Update the `PUT /employees/{employee_id}` section of `specs/api/employees.md` to document the new `user_id` field and its three-state (omitted / set / explicit `null`) semantics, plus the new `404`/`400` error cases (per contracts/employees.md)
+- [X] T008 [P] [US2] Add `user_id: Optional[UUID] = None` to `EmployeeUpdate` and `user_id: Optional[UUID]` to `EmployeeResponse` in `app/slices/employees/update_employee/ui/schemas.py`
+- [X] T009 [P] [US2] Add `user_id: Optional[UUID] = None` and `clear_user: bool = False` parameters to `UpdateEmployee.execute` in `app/slices/employees/update_employee/application/use_case.py`: if `clear_user` is true, clear the association; else if `user_id` is provided, validate it the same way as T004 (excluding the employee being edited from the uniqueness check, e.g. `Employee.exclude(id=employee_id).get_or_none(user_id=user_id)`) before delegating to the repository (per research.md Decisions 2 and 3)
+- [X] T010 [P] [US2] Add `user_id: Optional[UUID] = None` and `clear_user: bool = False` parameters to `UpdateEmployeeRepository.update` in `app/slices/employees/update_employee/infra/repository.py`: set `employee.user_id = None` when `clear_user` is true, else set `employee.user = user` (the validated instance) when `user_id is not None`, leaving the field untouched otherwise
+- [X] T011 [US2] Update `app/slices/employees/update_employee/ui/route.py` to derive `clear_user = "user_id" in data.model_fields_set and data.user_id is None`, pass `user_id=data.user_id, clear_user=clear_user` into the use case call, and extend the existing `except ValueError` block so only the employee-not-found case maps to `404` with its current message while new "User not found" messages map to `404` and any other message (e.g. the duplicate-link case) maps to `400` (mirror `partner_loan/create_loan`'s branching pattern); depends on T008, T009, T010
+- [X] T012 [P] [US2] Update the `PUT /employees/{employee_id}` section of `specs/api/employees.md` to document the new `user_id` field and its three-state (omitted / set / explicit `null`) semantics, plus the new `404`/`400` error cases (per contracts/employees.md)
 
 **Checkpoint**: User Stories 1 and 2 both work independently.
 
@@ -105,9 +105,9 @@ for every employee in their response (see quickstart.md Scenario 8).
 
 ### Implementation for User Story 3
 
-- [ ] T013 [P] [US3] Add `user_id: Optional[UUID]` to `EmployeeResponse` in `app/slices/employees/get_employee/ui/schemas.py`
-- [ ] T014 [P] [US3] Add `user_id: Optional[UUID]` to `EmployeeResponse` in `app/slices/employees/list_employees/ui/schemas.py`
-- [ ] T015 [P] [US3] Update the `Employee` shape block of `specs/api/employees.md` (used by `GET /employees/{employee_id}` and `GET /employees/`) to list the new `user_id` field
+- [X] T013 [P] [US3] Add `user_id: Optional[UUID]` to `EmployeeResponse` in `app/slices/employees/get_employee/ui/schemas.py`
+- [X] T014 [P] [US3] Add `user_id: Optional[UUID]` to `EmployeeResponse` in `app/slices/employees/list_employees/ui/schemas.py`
+- [X] T015 [P] [US3] Update the `Employee` shape block of `specs/api/employees.md` (used by `GET /employees/{employee_id}` and `GET /employees/`) to list the new `user_id` field
 
 **Checkpoint**: All three user stories are independently functional; the full feature is complete.
 
@@ -115,8 +115,8 @@ for every employee in their response (see quickstart.md Scenario 8).
 
 ## Phase 6: Polish & Cross-Cutting Concerns
 
-- [ ] T016 Run all 8 quickstart.md scenarios end-to-end against a local dev server to validate the complete feature
-- [ ] T017 Invoke the `update-api-contract` skill (or manually diff) to confirm `specs/api/employees.md` matches the final implemented routes/schemas exactly, per `CLAUDE.md`'s mandatory API-contract-sync rule
+- [X] T016 Run all 8 quickstart.md scenarios end-to-end against a local dev server to validate the complete feature
+- [X] T017 Invoke the `update-api-contract` skill (or manually diff) to confirm `specs/api/employees.md` matches the final implemented routes/schemas exactly, per `CLAUDE.md`'s mandatory API-contract-sync rule
 
 ---
 
