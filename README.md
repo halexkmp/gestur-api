@@ -50,7 +50,7 @@ Common logic and shared models live in `app/shared/`.
 - `app/`: Core application code.
   - `shared/`: Database models, enums, security, and utilities.
   - `slices/`: Feature-based vertical slices.
-- `docs/`: Requirement documents, implementation plans, and tasks.
+- `specs/`: Per-feature spec, plan, and tasks documents (managed via Spec Kit — `/speckit-specify`, `/speckit-plan`, `/speckit-tasks`).
 - `migrations/`: Aerich database migration files.
 - `tests/`: Unit and integration tests.
 
@@ -98,4 +98,4 @@ The project is configured for deployment on **Vercel** as a Python Serverless Fu
 
 ## 📄 Guidelines
 
-When contributing, please follow the [Vertical Slice Architecture Guide](AGENTS.md) located in the `.junie` directory.
+When contributing, please follow the [Vertical Slice Architecture guidance](CLAUDE.md) and the project [constitution](.specify/memory/constitution.md).
