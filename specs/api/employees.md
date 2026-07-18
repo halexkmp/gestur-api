@@ -22,6 +22,10 @@ POST /employees/salary-advances → 201, returns no body
 
 DELETE /employees/salary-advances/{advance_id} → 204
 
+GET /employees/lateness-config
+
+PUT /employees/lateness-config
+
 All query params above are optional filters.
 
 ---
@@ -83,6 +87,41 @@ created_at
 
 ---
 
+## Lateness Configuration
+
+Single, system-wide configuration governing late-arrival salary deductions.
+
+```text
+enabled                        # bool
+expected_entrance_time         # time, "HH:MM:SS"
+tolerance_minutes              # int >= 0 — grace period before a check-in counts as late
+deduction_interval_minutes     # int > 0 — minutes of delay per deducted block
+deduction_value                # decimal >= 0 — amount deducted per full block reached
+```
+
+GET /employees/lateness-config: returns the values above. If no configuration has ever
+been created, returns disabled/all-zero defaults (`enabled: false`, `expected_entrance_time:
+"00:00:00"`, all numeric fields `0`/`0.00`) rather than `404`.
+
+- Quirk: `expected_entrance_time` is stored as UTC and serializes with a trailing `Z`
+  (e.g. `"08:00:00Z"`) once a real row exists, but as a bare `"00:00:00"` (no offset) in
+  the no-row default case above. Treat both as UTC wall-clock time-of-day.
+
+PUT /employees/lateness-config: full replace — all five fields are required on every call
+(no partial patch). Creates the singleton row if none exists yet, otherwise updates the
+existing one in place. Response: same shape as GET.
+
+- `tolerance_minutes < 0`, `deduction_interval_minutes <= 0`, or `deduction_value < 0` →
+  `400 Bad Request`.
+
+Deduction formula for a day where the employee's earliest check-in is later than
+`expected_entrance_time` by more than `tolerance_minutes`:
+`floor(delay_minutes / deduction_interval_minutes) * deduction_value`, where `delay_minutes`
+is measured from `expected_entrance_time` (not reduced by the tolerance). When disabled,
+no deduction is applied and salary summaries report zero delay/deduction.
+
+---
+
 ## Salary Summary
 
 GET /employees/salary-summary/{employee_id} response:
@@ -93,5 +132,12 @@ month
 year
 gross_salary
 advances_total
-net_salary
+late_delay_minutes     # total minutes late across days beyond tolerance this month
+late_days_count        # count of days beyond tolerance this month
+late_deduction_total   # total lateness deduction this month
+net_salary              # gross_salary - advances_total - late_deduction_total
 ```
+
+`late_delay_minutes`, `late_days_count`, and `late_deduction_total` are `0`/`0.00` when the
+lateness configuration is disabled or has never been created; `net_salary` is then
+numerically identical to `gross_salary - advances_total`.

@@ -1,7 +1,12 @@
 from uuid import UUID
-from datetime import date
+from datetime import date, datetime
 from decimal import Decimal
 from app.slices.employees.get_salary_summary.infra.repository import GetSalarySummaryRepository
+from app.slices.employees.get_salary_summary.domain.rules import (
+    calculate_daily_delay_minutes,
+    is_late,
+    calculate_deduction,
+)
 
 
 class GetSalarySummary:
@@ -27,12 +32,63 @@ class GetSalarySummary:
         # Ensure Decimal math and round to 2 decimal places for money
         salary: Decimal = Decimal(employee.salary)
         advances: Decimal = Decimal(advances_total)
-        net = salary - advances
+
+        late_delay_minutes, late_days_count, late_deduction_total = await self._calculate_lateness(
+            employee_user_id=employee.user_id,
+            month=month,
+            year=year,
+        )
+
+        net = salary - advances - late_deduction_total
         return {
             "employee_id": employee.id,
             "month": month,
             "year": year,
             "gross_salary": salary,
             "advances_total": advances,
+            "late_delay_minutes": late_delay_minutes,
+            "late_days_count": late_days_count,
+            "late_deduction_total": late_deduction_total,
             "net_salary": net,
         }
+
+    async def _calculate_lateness(
+        self,
+        employee_user_id: UUID | None,
+        month: int,
+        year: int,
+    ) -> tuple[int, int, Decimal]:
+        if employee_user_id is None:
+            return 0, 0, Decimal("0")
+
+        config = await self.repository.get_lateness_configuration()
+        if not config or not config.enabled:
+            return 0, 0, Decimal("0")
+
+        timestamps = await self.repository.get_journey_timestamps(
+            user_id=employee_user_id, month=month, year=year
+        )
+
+        # Earliest check-in per calendar day is that day's entrance
+        earliest_by_day: dict[date, datetime] = {}
+        for ts in timestamps:
+            day = ts.date()
+            if day not in earliest_by_day or ts < earliest_by_day[day]:
+                earliest_by_day[day] = ts
+
+        total_delay_minutes = 0
+        late_days_count = 0
+        total_deduction = Decimal("0")
+
+        for entrance_at in earliest_by_day.values():
+            delay_minutes = calculate_daily_delay_minutes(entrance_at, config.expected_entrance_time)
+            if not is_late(delay_minutes, config.tolerance_minutes):
+                continue
+
+            late_days_count += 1
+            total_delay_minutes += delay_minutes
+            total_deduction += calculate_deduction(
+                delay_minutes, config.deduction_interval_minutes, Decimal(config.deduction_value)
+            )
+
+        return total_delay_minutes, late_days_count, total_deduction
