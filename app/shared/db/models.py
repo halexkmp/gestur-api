@@ -55,6 +55,7 @@ class Employee(models.Model):
     start_date = fields.DateField(auto_now_add=True)
     active = fields.BooleanField(default=True)
     created_at = fields.DatetimeField(auto_now_add=True)
+    user = fields.ForeignKeyField("models.User", related_name="employee", null=True, unique=True)
 
     class Meta:
         table = "employee"

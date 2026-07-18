@@ -14,6 +14,7 @@ use_case = UpdateEmployee(UpdateEmployeeRepository())
 @router.put("/{employee_id}", response_model=EmployeeResponse)
 async def route(employee_id: UUID, data: EmployeeUpdate, current_user=Depends(get_current_user)):
     ensure_hr(current_user)
+    clear_user = "user_id" in data.model_fields_set and data.user_id is None
     try:
         return await use_case.execute(
             employee_id=employee_id,
@@ -21,7 +22,13 @@ async def route(employee_id: UUID, data: EmployeeUpdate, current_user=Depends(ge
             pix_key=data.pix_key,
             salary=data.salary,
             active=data.active,
-            start_date=data.start_date
+            start_date=data.start_date,
+            user_id=data.user_id,
+            clear_user=clear_user
         )
-    except ValueError:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Employee not found")
+    except ValueError as e:
+        err_msg = str(e)
+        if "not found" in err_msg:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=err_msg)
+        else:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=err_msg)
