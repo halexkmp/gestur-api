@@ -10,6 +10,8 @@ from app.slices.employees.delete_salary_advance.ui.route import router as delete
 from app.slices.employees.get_salary_summary.ui.route import router as get_salary_summary_router
 from app.slices.employees.get_lateness_config.ui.route import router as get_lateness_config_router
 from app.slices.employees.update_lateness_config.ui.route import router as update_lateness_config_router
+from app.slices.employees.get_my_salary_summary.ui.route import router as get_my_salary_summary_router
+from app.slices.employees.list_my_salary_advances.ui.route import router as list_my_salary_advances_router
 
 router = APIRouter(prefix="/employees", tags=["employees"])
 # Register fixed-prefix routes first to avoid conflicts with /{employee_id}
@@ -21,6 +23,8 @@ router.include_router(list_salary_advances_router)
 router.include_router(delete_salary_advance_router)
 router.include_router(get_lateness_config_router)
 router.include_router(update_lateness_config_router)
+router.include_router(get_my_salary_summary_router)
+router.include_router(list_my_salary_advances_router)
 # Register dynamic routes last so they don't capture fixed paths like /salary-advances
 # or /lateness-config (both PUT /{employee_id} and PUT /lateness-config would otherwise collide)
 router.include_router(update_employee_router)

@@ -1,6 +1,8 @@
 # Employees API
 
-Requires: HUMAN_RESOURCES on every endpoint in this file.
+Requires: HUMAN_RESOURCES on every endpoint in this file, **except** `GET /employees/me/salary-summary`
+and `GET /employees/me/salary-advances`, which instead require the EMPLOYEE role plus a
+linked employee record on the caller's own account (see "Employee Self-Service" below).
 
 ## Endpoints
 
@@ -25,6 +27,10 @@ DELETE /employees/salary-advances/{advance_id} → 204
 GET /employees/lateness-config
 
 PUT /employees/lateness-config
+
+GET /employees/me/salary-summary?month={int}&year={int}
+
+GET /employees/me/salary-advances?month={int}&year={int}
 
 All query params above are optional filters.
 
@@ -111,6 +117,11 @@ PUT /employees/lateness-config: full replace — all five fields are required on
 (no partial patch). Creates the singleton row if none exists yet, otherwise updates the
 existing one in place. Response: same shape as GET.
 
+- `expected_entrance_time` may be submitted as a bare time (`"08:00:00"`, assumed UTC) or
+  with an explicit UTC offset (`"08:00:00-03:00"`, `"08:00:00Z"`); any offset is converted
+  to true UTC before being stored, so `"08:00:00-03:00"` is stored/interpreted as
+  `11:00:00` UTC, not as a bare `08:00` with the offset discarded.
+
 - `tolerance_minutes < 0`, `deduction_interval_minutes <= 0`, or `deduction_value < 0` →
   `400 Bad Request`.
 
@@ -141,3 +152,29 @@ net_salary              # gross_salary - advances_total - late_deduction_total
 `late_delay_minutes`, `late_days_count`, and `late_deduction_total` are `0`/`0.00` when the
 lateness configuration is disabled or has never been created; `net_salary` is then
 numerically identical to `gross_salary - advances_total`.
+
+---
+
+## Employee Self-Service
+
+Requires: EMPLOYEE role AND a linked employee record on the caller's own `User` account
+(the existing one-to-one `Employee.user` link) — not HUMAN_RESOURCES. Neither endpoint
+below accepts an `employee_id` parameter of any kind; the target employee is always the
+caller, resolved server-side from the authenticated token. A caller with the EMPLOYEE role
+but no linked employee record, or a caller without the EMPLOYEE role (even one who has a
+linked employee record, e.g. an HR user who is also on payroll), gets `403 Forbidden` from
+both endpoints.
+
+### GET /employees/me/salary-summary
+
+Self-service equivalent of `GET /employees/salary-summary/{employee_id}`, scoped to the
+caller. Same response shape as that endpoint (see "Salary Summary" above), including the
+lateness delay/deduction breakdown — an employee can see why their own pay was reduced.
+`month`/`year` are optional and default to the current month, same as the HR-facing
+endpoint.
+
+### GET /employees/me/salary-advances
+
+Self-service equivalent of `GET /employees/salary-advances?employee_id=...`, scoped to the
+caller. Same response item shape as that endpoint (see "Salary Advance" above). `month`/`year`
+are optional filters; omitting both returns all of the caller's own advances.

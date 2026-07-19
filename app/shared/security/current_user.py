@@ -38,7 +38,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
             _USER_CACHE.pop(token, None)
 
     # Cache miss or expired: fetch from DB
-    user = await User.get_or_none(username=username).prefetch_related("roles")
+    user = await User.get_or_none(username=username).prefetch_related("roles","employee")
     if user is None:
         raise credentials_exception
 
