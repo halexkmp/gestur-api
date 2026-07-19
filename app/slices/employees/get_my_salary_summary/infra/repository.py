@@ -5,7 +5,7 @@ from datetime import date, datetime
 from app.shared.db.models import Employee, SalaryAdvance, JourneyRegistry, LatenessConfiguration
 
 
-class GetSalarySummaryRepository:
+class GetMySalarySummaryRepository:
     async def get_employee_and_month_advances(
         self, employee_id: UUID, month: int, year: int
     ) -> Tuple[Employee, Decimal]:

@@ -1,24 +1,22 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from uuid import UUID
 from app.shared.security.current_user import get_current_user
-from app.slices.employees.get_salary_summary.application.use_case import GetSalarySummary
-from app.slices.employees.get_salary_summary.infra.repository import GetSalarySummaryRepository
+from app.shared.security.permissions import resolve_own_employee_id
+from app.slices.employees.get_my_salary_summary.application.use_case import GetMySalarySummary
+from app.slices.employees.get_my_salary_summary.infra.repository import GetMySalarySummaryRepository
 from .schemas import SalarySummaryResponse
-from app.shared.security.permissions import ensure_hr, ensure_employee
 
-router = APIRouter(prefix="/salary-summary")
+router = APIRouter()
 
-use_case = GetSalarySummary(GetSalarySummaryRepository())
+use_case = GetMySalarySummary(GetMySalarySummaryRepository())
 
 
-@router.get("/{employee_id}", response_model=SalarySummaryResponse)
+@router.get("/me/salary-summary", response_model=SalarySummaryResponse)
 async def route(
-    employee_id: UUID,
     month: int | None = None,
     year: int | None = None,
     current_user=Depends(get_current_user),
 ):
-    ensure_hr(current_user)
+    employee_id = resolve_own_employee_id(current_user)
     try:
         return await use_case.execute(
             employee_id=employee_id,

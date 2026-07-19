@@ -55,7 +55,7 @@ class Employee(models.Model):
     start_date = fields.DateField(auto_now_add=True)
     active = fields.BooleanField(default=True)
     created_at = fields.DatetimeField(auto_now_add=True)
-    user = fields.ForeignKeyField("models.User", related_name="employee", null=True, unique=True)
+    user = fields.OneToOneField("models.User", related_name="employee", null=True)
 
     class Meta:
         table = "employee"
@@ -185,3 +185,16 @@ class LoanInstallmentPayment(models.Model):
 
     class Meta:
         table = "loan_installment_payment"
+
+class LatenessConfiguration(models.Model):
+    id = fields.UUIDField(pk=True)
+    enabled = fields.BooleanField(default=False)
+    expected_entrance_time = fields.TimeField()
+    tolerance_minutes = fields.IntField(default=0)
+    deduction_interval_minutes = fields.IntField(default=0)
+    deduction_value = fields.DecimalField(max_digits=10, decimal_places=2, default=0)
+    created_at = fields.DatetimeField(auto_now_add=True)
+    updated_at = fields.DatetimeField(auto_now=True)
+
+    class Meta:
+        table = "lateness_configuration"

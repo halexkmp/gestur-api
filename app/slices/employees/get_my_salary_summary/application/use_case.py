@@ -1,7 +1,7 @@
 from uuid import UUID
 from datetime import date, datetime
 from decimal import Decimal
-from app.slices.employees.get_salary_summary.infra.repository import GetSalarySummaryRepository
+from app.slices.employees.get_my_salary_summary.infra.repository import GetMySalarySummaryRepository
 from app.slices.employees.get_salary_summary.domain.rules import (
     calculate_daily_delay_minutes,
     is_late,
@@ -9,8 +9,8 @@ from app.slices.employees.get_salary_summary.domain.rules import (
 )
 
 
-class GetSalarySummary:
-    def __init__(self, repository: GetSalarySummaryRepository):
+class GetMySalarySummary:
+    def __init__(self, repository: GetMySalarySummaryRepository):
         self.repository = repository
 
     async def execute(
