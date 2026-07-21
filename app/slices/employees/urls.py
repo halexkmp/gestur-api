@@ -19,6 +19,7 @@ from app.slices.employees.create_justified_absence.ui.route import router as cre
 from app.slices.employees.list_justified_absences.ui.route import router as list_justified_absences_router
 from app.slices.employees.delete_justified_absence.ui.route import router as delete_justified_absence_router
 from app.slices.employees.get_attendance_verification.ui.route import router as get_attendance_verification_router
+from app.slices.employees.get_employees_schedule_overview.ui.route import router as get_employees_schedule_overview_router
 
 router = APIRouter(prefix="/employees", tags=["employees"])
 # Register fixed-prefix routes first to avoid conflicts with /{employee_id}
@@ -39,6 +40,7 @@ router.include_router(create_justified_absence_router)
 router.include_router(list_justified_absences_router)
 router.include_router(delete_justified_absence_router)
 router.include_router(get_attendance_verification_router)
+router.include_router(get_employees_schedule_overview_router)
 # Register dynamic routes last so they don't capture fixed paths like /salary-advances
 # or /lateness-config (both PUT /{employee_id} and PUT /lateness-config would otherwise collide)
 router.include_router(update_employee_router)
