@@ -193,6 +193,7 @@ class LatenessConfiguration(models.Model):
     tolerance_minutes = fields.IntField(default=0)
     deduction_interval_minutes = fields.IntField(default=0)
     deduction_value = fields.DecimalField(max_digits=10, decimal_places=2, default=0)
+    utc_offset_minutes = fields.IntField(default=-180)
     created_at = fields.DatetimeField(auto_now_add=True)
     updated_at = fields.DatetimeField(auto_now=True)
 

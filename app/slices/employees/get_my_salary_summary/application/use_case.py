@@ -1,5 +1,5 @@
 from uuid import UUID
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from decimal import Decimal
 from app.slices.employees.get_my_salary_summary.infra.repository import GetMySalarySummaryRepository
 from app.slices.employees.get_salary_summary.domain.rules import (
@@ -69,10 +69,14 @@ class GetMySalarySummary:
             user_id=employee_user_id, month=month, year=year
         )
 
-        # Earliest check-in per calendar day is that day's entrance
+        # Earliest check-in per calendar day is that day's entrance. Bucket by the
+        # configured local day, not the UTC day the timestamp is stored in — a
+        # check-in near local midnight can carry a different UTC calendar date,
+        # which would otherwise misattribute it to the wrong business day.
+        local_offset = timedelta(minutes=config.utc_offset_minutes)
         earliest_by_day: dict[date, datetime] = {}
         for ts in timestamps:
-            day = ts.date()
+            day = (ts + local_offset).date()
             if day not in earliest_by_day or ts < earliest_by_day[day]:
                 earliest_by_day[day] = ts
 
