@@ -85,7 +85,9 @@ class GetMySalarySummary:
         total_deduction = Decimal("0")
 
         for entrance_at in earliest_by_day.values():
-            delay_minutes = calculate_daily_delay_minutes(entrance_at, config.expected_entrance_time)
+            delay_minutes = calculate_daily_delay_minutes(
+                entrance_at, config.expected_entrance_time, config.utc_offset_minutes
+            )
             if not is_late(delay_minutes, config.tolerance_minutes):
                 continue
 
