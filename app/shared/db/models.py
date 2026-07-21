@@ -186,6 +186,33 @@ class LoanInstallmentPayment(models.Model):
     class Meta:
         table = "loan_installment_payment"
 
+class EmployeeSchedule(models.Model):
+    id = fields.UUIDField(pk=True)
+    employee = fields.OneToOneField("models.Employee", related_name="schedule")
+    monday = fields.BooleanField(default=False)
+    tuesday = fields.BooleanField(default=False)
+    wednesday = fields.BooleanField(default=False)
+    thursday = fields.BooleanField(default=False)
+    friday = fields.BooleanField(default=False)
+    saturday = fields.BooleanField(default=False)
+    sunday = fields.BooleanField(default=False)
+    created_at = fields.DatetimeField(auto_now_add=True)
+    updated_at = fields.DatetimeField(auto_now=True)
+
+    class Meta:
+        table = "employee_schedule"
+
+class JustifiedAbsence(models.Model):
+    id = fields.UUIDField(pk=True)
+    employee = fields.ForeignKeyField("models.Employee", related_name="justified_absences")
+    absence_date = fields.DateField()
+    reason = fields.TextField(null=True)
+    created_at = fields.DatetimeField(auto_now_add=True)
+
+    class Meta:
+        table = "justified_absence"
+        unique_together = (("employee", "absence_date"),)
+
 class LatenessConfiguration(models.Model):
     id = fields.UUIDField(pk=True)
     enabled = fields.BooleanField(default=False)
