@@ -1,6 +1,8 @@
 from uuid import UUID
 from datetime import date, datetime, timedelta
 from decimal import Decimal
+from typing import List, Optional
+from app.shared.db.models import LatenessConfiguration
 from app.slices.employees.get_salary_summary.infra.repository import GetSalarySummaryRepository
 from app.slices.employees.get_salary_summary.domain.rules import (
     calculate_daily_delay_minutes,
@@ -15,59 +17,87 @@ class GetSalarySummary:
 
     async def execute(
         self,
-        employee_id: UUID,
         month: int | None = None,
         year: int | None = None,
-    ):
+    ) -> List[dict]:
         # Default month/year to current when not provided
         today = date.today()
         month = month or today.month
         year = year or today.year
 
-        employee, advances_total = await self.repository.get_employee_and_month_advances(
-            employee_id=employee_id,
-            month=month,
-            year=year,
-        )
-        # Ensure Decimal math and round to 2 decimal places for money
-        salary: Decimal = Decimal(employee.salary)
-        advances: Decimal = Decimal(advances_total)
+        employees = await self.repository.get_all_employees()
+        if not employees:
+            return []
 
-        late_delay_minutes, late_days_count, late_deduction_total = await self._calculate_lateness(
-            employee_user_id=employee.user_id,
-            month=month,
-            year=year,
+        employee_ids = [employee.id for employee in employees]
+        advances_by_employee = await self.repository.get_month_advances_bulk(
+            employee_ids=employee_ids, month=month, year=year
         )
 
-        net = salary - advances - late_deduction_total
-        return {
-            "employee_id": employee.id,
-            "month": month,
-            "year": year,
-            "gross_salary": salary,
-            "advances_total": advances,
-            "late_delay_minutes": late_delay_minutes,
-            "late_days_count": late_days_count,
-            "late_deduction_total": late_deduction_total,
-            "net_salary": net,
-        }
+        # Lateness config is a single global row — fetched once regardless of employee count.
+        config = await self.repository.get_lateness_configuration()
 
-    async def _calculate_lateness(
+        # Only bulk-fetch journeys when lateness is actually enabled, to avoid an
+        # unnecessary query when every employee's lateness fields are zero anyway.
+        user_ids = [employee.user_id for employee in employees if employee.user_id is not None]
+        timestamps_by_user = (
+            await self.repository.get_journey_timestamps_bulk(user_ids=user_ids, month=month, year=year)
+            if user_ids and config and config.enabled
+            else {}
+        )
+
+        results: List[dict] = []
+        for employee in employees:
+            employee_advances = advances_by_employee.get(employee.id, [])
+            advances_total = sum(
+                (Decimal(advance.amount) for advance in employee_advances), Decimal("0")
+            )
+
+            late_delay_minutes, late_days_count, late_deduction_total = self._calculate_lateness(
+                employee_user_id=employee.user_id,
+                config=config,
+                timestamps=timestamps_by_user.get(employee.user_id, []) if employee.user_id else [],
+            )
+
+            gross_salary = Decimal(employee.salary)
+            net_salary = gross_salary - advances_total - late_deduction_total
+
+            results.append(
+                {
+                    "employee_id": employee.id,
+                    "month": month,
+                    "year": year,
+                    "gross_salary": gross_salary,
+                    "advances_total": advances_total,
+                    "advances": [
+                        {
+                            "id": advance.id,
+                            "amount": Decimal(advance.amount),
+                            "advance_date": advance.advance_date,
+                            "note": advance.note,
+                        }
+                        for advance in employee_advances
+                    ],
+                    "late_delay_minutes": late_delay_minutes,
+                    "late_days_count": late_days_count,
+                    "late_deduction_total": late_deduction_total,
+                    "net_salary": net_salary,
+                }
+            )
+
+        return results
+
+    def _calculate_lateness(
         self,
         employee_user_id: UUID | None,
-        month: int,
-        year: int,
+        config: Optional[LatenessConfiguration],
+        timestamps: List[datetime],
     ) -> tuple[int, int, Decimal]:
         if employee_user_id is None:
             return 0, 0, Decimal("0")
 
-        config = await self.repository.get_lateness_configuration()
         if not config or not config.enabled:
             return 0, 0, Decimal("0")
-
-        timestamps = await self.repository.get_journey_timestamps(
-            user_id=employee_user_id, month=month, year=year
-        )
 
         # Earliest check-in per calendar day is that day's entrance. Bucket by the
         # configured local day, not the UTC day the timestamp is stored in — a
