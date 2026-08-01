@@ -1,4 +1,5 @@
 import decimal
+from calendar import monthrange
 from decimal import Decimal
 from uuid import UUID
 from typing import List, Optional
@@ -13,11 +14,12 @@ from app.slices.employees.create_salary_advance.domain.rules import (
 
 
 def _add_months(d: date, months: int) -> date:
-    # compute year and month roll-over
+    # compute year and month roll-over, preserving the original day (clamped to the target month's length)
     m = d.month - 1 + months
     year = d.year + m // 12
     month = m % 12 + 1
-    return date(year, month, 1)
+    day = min(d.day, monthrange(year, month)[1])
+    return date(year, month, day)
 
 
 class CreateSalaryAdvance:
