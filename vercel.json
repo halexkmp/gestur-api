@@ -1,7 +1,4 @@
 {
   "version": 2,
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/api/index.py" }
-  ],
   "installCommand": "pip install -r requirements.txt && python migrations/run_migrations.py"
 }
