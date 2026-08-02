@@ -2,13 +2,13 @@
   "version": 2,
   "functions": {
     "api/index.py": {
-      "runtime": "@vercel/python@6.53.0",
+      "runtime": "vercel-python@6.0.0",
       "maxDuration": 60,
       "memory": 1024
     }
   },
-  "routes": [
-    { "src": "/(.*)", "dest": "/api/index.py" }
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/api/index.py" }
   ],
   "installCommand": "pip install -r requirements.txt && python migrations/run_migrations.py"
 }
