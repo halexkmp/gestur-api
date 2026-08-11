@@ -9,14 +9,17 @@ from app.slices.partner_loan.pay_loan_installment.ui.route import router as pay_
 from app.slices.partner_loan.register_payment.ui.route import router as register_payment_router
 from app.slices.partner_loan.list_payments.ui.route import router as list_payments_router
 from app.slices.partner_loan.period_summary.ui.route import router as period_summary_router
+from app.slices.partner_loan.upcoming_installments.ui.route import router as upcoming_installments_router
 
 router = APIRouter()
 
 loans_router = APIRouter(prefix="/loans", tags=["loans"])
 loans_router.include_router(create_loan_router)
 # Must precede get_loan_router: GET /{loan_id} would otherwise match the
-# literal "period-summary" segment and fail UUID validation with a 422.
+# literal "period-summary" and "upcoming-installments" segments and fail UUID
+# validation with a 422.
 loans_router.include_router(period_summary_router)
+loans_router.include_router(upcoming_installments_router)
 loans_router.include_router(get_loan_router)
 loans_router.include_router(get_loan_summary_router)
 loans_router.include_router(list_loans_router)
