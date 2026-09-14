@@ -28,6 +28,7 @@ class UpdateUserRepository:
             await user.update_from_dict(update_data).save()
         if roles is not None:
             roles_instances = await Role.filter(id__in=[r.id for r in roles])
+            await user.roles.clear()
             await user.roles.add(*roles_instances)
         await user.fetch_related("roles")
         return user
