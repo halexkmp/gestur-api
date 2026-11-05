@@ -155,3 +155,39 @@ Requires: ADMIN or MANAGER
 ### DELETE /tirolesa/products/{tirolesa_product_id} → 204
 
 Requires: ADMIN or MANAGER. 404 when the link does not exist.
+
+---
+
+## Justifications
+
+Explains descents that have no sale, such as test or courtesy rides.
+
+### POST /tirolesa/audit/justifications → 201
+
+Requires: ADMIN or MANAGER
+
+Request:
+
+```text
+audit_date   # local date
+quantity     # descents, minimum 1
+type         # TirolesaJustificationType
+reason       # required, not empty
+```
+
+Response:
+
+```text
+id
+audit_date
+quantity
+type
+reason
+created_at
+```
+
+### DELETE /tirolesa/audit/justifications/{justification_id} → 204
+
+Requires: ADMIN or MANAGER. 404 when missing or already deleted.
+
+The record is kept with who deleted it, and stops counting in the audit.
