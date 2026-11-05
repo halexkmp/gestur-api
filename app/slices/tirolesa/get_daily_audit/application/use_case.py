@@ -75,7 +75,7 @@ class GetDailyAudit:
             justifications_by_day[justification.audit_date].append(justification)
 
         hours_by_day: dict[date, int] = defaultdict(int)
-        for hour in await self.repository.get_device_hours(start, end):
+        for hour in set(await self.repository.get_device_hours(start, end)):
             hours_by_day[local_date(hour, offset)] += 1
 
         days = []

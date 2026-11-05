@@ -273,10 +273,10 @@ class TirolesaJustification(models.Model):
     quantity = fields.IntField()
     type = fields.CharEnumField(TirolesaJustificationType)
     reason = fields.TextField()
-    created_by = fields.ForeignKeyField("models.User", related_name="created_justifications")
+    created_by = fields.ForeignKeyField("models.User", related_name="created_justifications", on_delete=fields.RESTRICT)
     created_at = fields.DatetimeField(auto_now_add=True)
     is_deleted = fields.BooleanField(default=False)
-    deleted_by = fields.ForeignKeyField("models.User", related_name="deleted_justifications", null=True)
+    deleted_by = fields.ForeignKeyField("models.User", related_name="deleted_justifications", null=True, on_delete=fields.RESTRICT)
     deleted_at = fields.DatetimeField(null=True)
 
     class Meta:

@@ -303,6 +303,8 @@ Wire the router into `app/main.py`.
 - Someone walking past both sensors can count as a descent. A manager would justify it
   or investigate it, which is the intended behaviour.
 - Audit figures for a day can change if the device delivers delayed trips later.
+- A user who created or deleted a justification cannot be deleted, so the record of an
+  excuse survives. Deactivate that user instead.
 
 ## Left to the builder
 
