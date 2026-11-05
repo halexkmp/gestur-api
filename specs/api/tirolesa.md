@@ -108,3 +108,50 @@ Sent every 5 minutes. No request body. Use `server_time` to resync the device cl
 ```text
 server_time
 ```
+
+---
+
+## Tirolesa products
+
+Links a product to the audit. Only linked products count as descents sold.
+
+### POST /tirolesa/products → 201
+
+Requires: ADMIN or MANAGER. 404 when the product does not exist, 409 when already linked.
+
+Request:
+
+```text
+product_id
+units_per_descent   # default 1, minimum 1
+```
+
+`units_per_descent` is how many sold units make one descent. Solo and tandem products
+sold as one descent use 1. A product sold per person that always rides in pairs uses 2.
+
+Response:
+
+```text
+id
+product_id
+units_per_descent
+```
+
+### GET /tirolesa/products
+
+Requires: ADMIN or MANAGER
+
+```text
+[
+  {
+    id
+    product_id
+    product_name
+    units_per_descent
+  }
+]
+```
+
+### DELETE /tirolesa/products/{tirolesa_product_id} → 204
+
+Requires: ADMIN or MANAGER. 404 when the link does not exist.
