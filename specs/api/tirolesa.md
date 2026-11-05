@@ -191,3 +191,60 @@ created_at
 Requires: ADMIN or MANAGER. 404 when missing or already deleted.
 
 The record is kept with who deleted it, and stops counting in the audit.
+
+---
+
+## Daily audit
+
+### GET /tirolesa/audit?date_from={date}&date_to={date}
+
+Requires: ADMIN or MANAGER
+
+Both params are required local dates, inclusive. 400 when `date_from` is after `date_to`
+or the range exceeds 62 days.
+
+Returns one row per date in the range, oldest first, including days with no activity.
+Days use the local offset from the lateness configuration, falling back to UTC-3.
+
+```text
+[
+  {
+    date
+    descents_detected              # trips on this local date, placed by start
+    descents_sold                  # from linked products on non-canceled sales
+    descents_below_default_price   # part of descents_sold, sold below default_price
+    descents_justified
+    unexplained                    # detected - sold - justified, floored at 0
+    sold_above_detected            # sold + justified - detected, floored at 0
+    sales_amount                   # total_price of linked products' sale items
+    estimated_unpaid_value         # unexplained x average price per descent
+    status                         # TirolesaAuditStatus
+    device_hours                   # hours the device was seen on this local date
+    clock_suspect_trips            # clock suspect trips, placed by when they arrived
+    sensor_warning                 # device_hours is 0 or clock_suspect_trips > 0
+    justifications: [
+      {
+        id
+        quantity
+        type        # TirolesaJustificationType
+        reason
+        created_by: { id, name }
+        created_at
+      }
+    ]
+  }
+]
+```
+
+Status:
+
+- `UNEXPLAINED`: more descents were detected than sold and justified.
+- `SOLD_ABOVE_DETECTED`: fewer descents were detected than sold and justified. This
+  means a sensor failed or a sale had no ride, so it carries no money value.
+- `BALANCED`: the numbers match.
+
+`descents_below_default_price` does not affect `status`, because discounts and partner
+prices are normal. A high value is worth a manager's attention, since a R$0 sale could
+cover an unsold ride. It compares with the product's current `default_price`.
+
+Figures for past days can change if the device delivers delayed trips later.
