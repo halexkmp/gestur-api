@@ -36,6 +36,15 @@ def ensure_hr_or_admin(current_user):
     if not any(getattr(r, "name", None) in (UserRole.HUMAN_RESOURCES, UserRole.ADMIN) for r in roles):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden: HR or Admin role required")
 
+def ensure_admin_or_manager(current_user):
+    """Ensure the current user has the Admin or Manager role.
+
+    Raises HTTP 403 if neither role is present.
+    """
+    roles = current_user.roles
+    if not any(getattr(r, "name", None) in (UserRole.ADMIN, UserRole.MANAGER) for r in roles):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden: Admin or Manager role required")
+
 def resolve_own_employee_id(current_user) -> UUID:
     """Ensure the current user has the Employee role and a linked Employee record.
 

@@ -40,7 +40,7 @@ app/slices/<context>/<feature_name>/
     domain/rules.py             # optional: pure business logic, no framework imports
 ```
 
-- Each `<context>` (e.g. `auth`, `users`, `partner_loan`, `journey`, `employees`, `partners`, `products`, `sales`, `reports`, `roles`) has a top-level `urls.py` that composes an `APIRouter` from each feature's `ui/route.py` and is wired into `app/main.py`.
+- Each `<context>` (e.g. `auth`, `users`, `partner_loan`, `journey`, `employees`, `partners`, `products`, `sales`, `reports`, `roles`, `tirolesa`) has a top-level `urls.py` that composes an `APIRouter` from each feature's `ui/route.py` and is wired into `app/main.py`.
 - Dependency direction is one-way: UI → Application → Domain (optional) → Infrastructure. Never the reverse.
 - Repositories only persist/retrieve; business rules live in `application/` or `domain/`, never in `ui/` or `infra/`.
 - Use case constructors wire their own collaborators (repository, hashers, token service, etc.) — see `app/slices/auth/login_user/ui/route.py` for the pattern: the module instantiates `use_case = LoginUser(Repo(), Verifier(), TokenService())` at import time and the route just calls `use_case.execute(...)`.
@@ -72,7 +72,7 @@ Features are specified using [Spec Kit](https://github.com/github/spec-kit): `/s
 
 ## API contract (specs/api/)
 
-`specs/api/` is the standing API contract consumed by the separate frontend project — one file per context (`auth.md`, `users.md`, `employees.md`, `journey.md`, `loans.md`, `partners.md`, `products.md`, `reports.md`, `sales.md`, `roles.md`), plus `shared.md` for cross-cutting auth/error/enum/type conventions. Unlike `specs/<NNN-feature-name>/`, which documents one feature's intent at a point in time, `specs/api/` is a living mirror of the current API surface and MUST always match `app/slices/` exactly.
+`specs/api/` is the standing API contract consumed by the separate frontend project — one file per context (`auth.md`, `users.md`, `employees.md`, `journey.md`, `loans.md`, `partners.md`, `products.md`, `reports.md`, `sales.md`, `roles.md`, `tirolesa.md`), plus `shared.md` for cross-cutting auth/error/enum/type conventions. Unlike `specs/<NNN-feature-name>/`, which documents one feature's intent at a point in time, `specs/api/` is a living mirror of the current API surface and MUST always match `app/slices/` exactly.
 
 **This update is mandatory, not optional:** any change to a route path/method, request or response schema field, query/path parameter, role/permission guard, non-default status code, or shared enum in `app/shared/db/enums.py` MUST update the matching `specs/api/<context>.md` (and `shared.md` for enums) in the same change — whether the change came from `/speckit-implement` or an ad hoc edit. A slice change is not complete until its contract file reflects it. Adding a brand-new `<context>` slice requires adding a new `specs/api/<context>.md`.
 

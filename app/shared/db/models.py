@@ -1,5 +1,5 @@
 from tortoise import fields, models
-from app.shared.db.enums import UserRole, PartnerType, SaleStatus, PaymentMethod, PartnerCustomerShift, ProductType, StockChangeType, LoanStatus, LoanInstallmentStatus
+from app.shared.db.enums import UserRole, PartnerType, SaleStatus, PaymentMethod, PartnerCustomerShift, ProductType, StockChangeType, LoanStatus, LoanInstallmentStatus, TirolesaJustificationType
 
 class Role(models.Model):
     id = fields.UUIDField(pk=True)
@@ -226,3 +226,58 @@ class LatenessConfiguration(models.Model):
 
     class Meta:
         table = "lateness_configuration"
+
+class TirolesaDevice(models.Model):
+    id = fields.UUIDField(pk=True)
+    name = fields.CharField(max_length=255)
+    api_key_hash = fields.CharField(max_length=64, unique=True)
+    active = fields.BooleanField(default=True)
+    last_seen_at = fields.DatetimeField(null=True)
+    created_at = fields.DatetimeField(auto_now_add=True)
+
+    class Meta:
+        table = "tirolesa_device"
+
+class TirolesaTrip(models.Model):
+    id = fields.UUIDField(pk=True)
+    device = fields.ForeignKeyField("models.TirolesaDevice", related_name="trips")
+    start_at = fields.DatetimeField(index=True)
+    end_at = fields.DatetimeField()
+    clock_suspect = fields.BooleanField(default=False)
+    received_at = fields.DatetimeField(auto_now_add=True)
+
+    class Meta:
+        table = "tirolesa_trip"
+
+class TirolesaDeviceHour(models.Model):
+    id = fields.UUIDField(pk=True)
+    device = fields.ForeignKeyField("models.TirolesaDevice", related_name="hours")
+    hour = fields.DatetimeField()
+
+    class Meta:
+        table = "tirolesa_device_hour"
+        unique_together = (("device", "hour"),)
+
+class TirolesaProduct(models.Model):
+    id = fields.UUIDField(pk=True)
+    product = fields.OneToOneField("models.Product", related_name="tirolesa_link")
+    units_per_descent = fields.IntField(default=1)
+    created_at = fields.DatetimeField(auto_now_add=True)
+
+    class Meta:
+        table = "tirolesa_product"
+
+class TirolesaJustification(models.Model):
+    id = fields.UUIDField(pk=True)
+    audit_date = fields.DateField()
+    quantity = fields.IntField()
+    type = fields.CharEnumField(TirolesaJustificationType)
+    reason = fields.TextField()
+    created_by = fields.ForeignKeyField("models.User", related_name="created_justifications")
+    created_at = fields.DatetimeField(auto_now_add=True)
+    is_deleted = fields.BooleanField(default=False)
+    deleted_by = fields.ForeignKeyField("models.User", related_name="deleted_justifications", null=True)
+    deleted_at = fields.DatetimeField(null=True)
+
+    class Meta:
+        table = "tirolesa_justification"
