@@ -2,6 +2,32 @@
 
 Daily audit of tirolesa descents detected by a device against descents sold.
 
+## Endpoints
+
+POST /tirolesa/trips → 201
+
+POST /tirolesa/devices/heartbeat
+
+POST /tirolesa/devices → 201
+
+GET /tirolesa/devices
+
+PUT /tirolesa/devices/{device_id}
+
+POST /tirolesa/products → 201
+
+GET /tirolesa/products
+
+DELETE /tirolesa/products/{tirolesa_product_id} → 204
+
+GET /tirolesa/audit?date_from={date}&date_to={date}
+
+POST /tirolesa/audit/justifications → 201
+
+DELETE /tirolesa/audit/justifications/{justification_id} → 204
+
+---
+
 ## Authentication
 
 Device endpoints use `X-Device-Key: <key>`, returned once by `POST /tirolesa/devices`.
