@@ -225,3 +225,5 @@ node_modules/
 !requirements.txt
 !pyproject.toml
 !README.md
+.vercel
+.env*
