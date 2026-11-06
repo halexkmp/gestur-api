@@ -22,7 +22,7 @@ async def route(current_user=Depends(get_current_user)):
             id=link.id,
             product_id=link.product.id,
             product_name=link.product.name,
-            units_per_descent=link.units_per_descent,
+            passengers_per_unit=link.passengers_per_unit,
         )
         for link in links
     ]

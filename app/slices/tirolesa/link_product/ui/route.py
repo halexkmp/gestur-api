@@ -21,7 +21,7 @@ async def route(data: LinkProductRequest, current_user=Depends(get_current_user)
     try:
         link = await use_case.execute(
             product_id=data.product_id,
-            units_per_descent=data.units_per_descent,
+            passengers_per_unit=data.passengers_per_unit,
         )
     except ProductNotFound:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found")
@@ -30,5 +30,5 @@ async def route(data: LinkProductRequest, current_user=Depends(get_current_user)
     return LinkProductResponse(
         id=link.id,
         product_id=data.product_id,
-        units_per_descent=link.units_per_descent,
+        passengers_per_unit=link.passengers_per_unit,
     )

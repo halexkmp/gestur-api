@@ -233,6 +233,7 @@ class TirolesaDevice(models.Model):
     api_key_hash = fields.CharField(max_length=64, unique=True)
     active = fields.BooleanField(default=True)
     last_seen_at = fields.DatetimeField(null=True)
+    offline = fields.BooleanField(default=True)
     created_at = fields.DatetimeField(auto_now_add=True)
 
     class Meta:
@@ -241,8 +242,9 @@ class TirolesaDevice(models.Model):
 class TirolesaTrip(models.Model):
     id = fields.UUIDField(pk=True)
     device = fields.ForeignKeyField("models.TirolesaDevice", related_name="trips")
-    start_at = fields.DatetimeField(index=True)
-    end_at = fields.DatetimeField()
+    start_at = fields.DatetimeField(index=True, auto_now_add=True)
+    end_at = fields.DatetimeField(auto_now_add=True)
+    passengers = fields.IntField(default=1)
     clock_suspect = fields.BooleanField(default=False)
     received_at = fields.DatetimeField(auto_now_add=True)
 
@@ -261,7 +263,7 @@ class TirolesaDeviceHour(models.Model):
 class TirolesaProduct(models.Model):
     id = fields.UUIDField(pk=True)
     product = fields.OneToOneField("models.Product", related_name="tirolesa_link")
-    units_per_descent = fields.IntField(default=1)
+    passengers_per_unit = fields.IntField(default=1)
     created_at = fields.DatetimeField(auto_now_add=True)
 
     class Meta:

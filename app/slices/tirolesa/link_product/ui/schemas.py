@@ -5,10 +5,10 @@ from pydantic import BaseModel, Field
 
 class LinkProductRequest(BaseModel):
     product_id: UUID
-    units_per_descent: int = Field(default=1, ge=1)
+    passengers_per_unit: int = Field(default=1, ge=1)
 
 
 class LinkProductResponse(BaseModel):
     id: UUID
     product_id: UUID
-    units_per_descent: int
+    passengers_per_unit: int

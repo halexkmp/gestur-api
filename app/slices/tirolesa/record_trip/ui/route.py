@@ -17,6 +17,7 @@ async def route(data: RecordTripRequest, response: Response, device=Depends(get_
         trip_id=data.id,
         start=data.start,
         end=data.end,
+        passengers=data.passengers,
     )
     if not created:
         response.status_code = status.HTTP_200_OK

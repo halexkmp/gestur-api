@@ -23,10 +23,10 @@ class AuditJustification(BaseModel):
 
 class AuditDayResponse(BaseModel):
     date: DateType
-    descents_detected: int
-    descents_sold: int
-    descents_below_default_price: int
-    descents_justified: int
+    passengers_detected: int
+    passengers_sold: int
+    passengers_below_default_price: int
+    passengers_justified: int
     unexplained: int
     sold_above_detected: int
     sales_amount: float

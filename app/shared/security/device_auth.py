@@ -28,7 +28,8 @@ async def get_current_device(x_device_key: Optional[str] = Header(default=None))
 
     now = datetime.now(timezone.utc)
     device.last_seen_at = now
-    await device.save(update_fields=["last_seen_at"])
+    device.offline = False
+    await device.save(update_fields=["last_seen_at", "offline"])
     await TirolesaDeviceHour.get_or_create(
         device=device,
         hour=now.replace(minute=0, second=0, microsecond=0),

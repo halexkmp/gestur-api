@@ -10,5 +10,5 @@ class LinkProductRepository:
     async def is_linked(self, product_id: UUID) -> bool:
         return await TirolesaProduct.filter(product_id=product_id).exists()
 
-    async def create(self, product_id: UUID, units_per_descent: int) -> TirolesaProduct:
-        return await TirolesaProduct.create(product_id=product_id, units_per_descent=units_per_descent)
+    async def create(self, product_id: UUID, passengers_per_unit: int) -> TirolesaProduct:
+        return await TirolesaProduct.create(product_id=product_id, passengers_per_unit=passengers_per_unit)

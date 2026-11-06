@@ -61,7 +61,7 @@ app/slices/<context>/<feature_name>/
 
 ## Configuration
 
-- Settings load from `.env` via `app/config.py` (`pydantic-settings`). Key vars: `ENVIRONMENT`, `SECRET_KEY`, `DATABASE_URL`, `ALLOWED_ORIGINS`, `BLOB_STORE_ID`/`BLOB_READ_WRITE_TOKEN`/`BLOB_FOLDER` (Vercel Blob for image storage), `GENERATE_SCHEMAS`, `RUN_MIGRATIONS_ON_STARTUP`.
+- Settings load from `.env` via `app/config.py` (`pydantic-settings`). Key vars: `ENVIRONMENT`, `SECRET_KEY`, `DATABASE_URL`, `ALLOWED_ORIGINS`, `BLOB_STORE_ID`/`BLOB_READ_WRITE_TOKEN`/`BLOB_FOLDER` (Vercel Blob for image storage), `CRON_SECRET` (authenticates Vercel Schedules calls), `GENERATE_SCHEMAS`, `RUN_MIGRATIONS_ON_STARTUP`.
 - In production, `DATABASE_URL` and `SECRET_KEY` are required (validated in `Settings._apply_env_defaults`); dev falls back to local Postgres defaults and a dev secret key.
 - `GENERATE_SCHEMAS` is only true outside production — in production, schema changes come from Aerich migrations, not `register_tortoise` auto-generation.
 - Deployment entrypoint is `api/index.py` (imports `app` from `app.main`); Vercel's `installCommand` in `vercel.json` runs `migrations/run_migrations.py` (`aerich upgrade`) before the function goes live.

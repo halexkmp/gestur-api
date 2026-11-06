@@ -7,4 +7,4 @@ class TirolesaProductResponse(BaseModel):
     id: UUID
     product_id: UUID
     product_name: str
-    units_per_descent: int
+    passengers_per_unit: int

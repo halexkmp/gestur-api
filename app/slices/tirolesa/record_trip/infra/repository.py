@@ -13,6 +13,7 @@ class RecordTripRepository:
         device_id: UUID,
         start_at: datetime,
         end_at: datetime,
+        passengers: int,
         clock_suspect: bool,
     ) -> bool:
         """Return True when created. A repeated id is a resend, so it is not an error."""
@@ -22,6 +23,7 @@ class RecordTripRepository:
                 device_id=device_id,
                 start_at=start_at,
                 end_at=end_at,
+                passengers=passengers,
                 clock_suspect=clock_suspect,
             )
         except IntegrityError:

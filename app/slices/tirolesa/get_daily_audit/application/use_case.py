@@ -43,15 +43,15 @@ class GetDailyAudit:
         links = await self.repository.get_linked_products()
         links_by_product = {link.product.id: link for link in links}
         linked = [
-            LinkedProduct(link.product.default_price, link.units_per_descent)
+            LinkedProduct(link.product.default_price, link.passengers_per_unit)
             for link in links
         ]
 
-        trips_by_day: dict[date, int] = defaultdict(int)
+        passengers_by_day: dict[date, int] = defaultdict(int)
         suspect_by_day: dict[date, int] = defaultdict(int)
         for trip in await self.repository.get_trips(start, end):
             day = trip_audit_date(trip.start_at, trip.received_at, trip.clock_suspect, offset)
-            trips_by_day[day] += 1
+            passengers_by_day[day] += trip.passengers
             if trip.clock_suspect:
                 suspect_by_day[day] += 1
 
@@ -66,7 +66,7 @@ class GetDailyAudit:
                     unit_price=item.unit_price,
                     total_price=item.total_price,
                     default_price=link.product.default_price,
-                    units_per_descent=link.units_per_descent,
+                    passengers_per_unit=link.passengers_per_unit,
                 )
             )
 
@@ -86,7 +86,7 @@ class GetDailyAudit:
                 AuditDay(
                     date=day,
                     figures=calculate_day(
-                        trips=trips_by_day[day],
+                        passengers=passengers_by_day[day],
                         lines=lines_by_day[day],
                         justified=sum(j.quantity for j in day_justifications),
                         device_hours=hours_by_day[day],

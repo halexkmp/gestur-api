@@ -1,7 +1,37 @@
 # Tirolesa Daily Audit: Design
 
 Date: 2026-11-05
-Status: approved by owner, 2026-11-05
+Status: approved by owner, 2026-11-05. Changed 2026-11-06: the audit counts passengers.
+
+## Change, 2026-11-06
+
+The owner added `passengers` to the trip request, to solve two people riding together.
+This replaces the descent as the audit unit, and it overrides anything below that
+says otherwise:
+
+- `POST /tirolesa/trips` requires `passengers`, from 1 to 10. The range is wide so a
+  high reading is kept and investigated rather than rejected and lost.
+- `passengers_detected` is the sum of `passengers` on the day's trips.
+- `TirolesaProduct.units_per_descent` becomes `passengers_per_unit`: Solo 1, Tandem 2,
+  sold per person 1. `passengers_sold` is `sum(quantity x passengers_per_unit)`.
+- All `descents_*` audit fields become `passengers_*`. Justification `quantity` counts
+  passengers.
+- The fallback price is the mean `default_price / passengers_per_unit`.
+- The gaps "an extra person on a paid solo ride" and "a tandem sold as two solos" are
+  closed, provided the count is reliable.
+- New hardware requirement: the device must count passengers without operator input.
+  A presence sensor fires once for two riders, so it cannot supply this number. If an
+  operator enters it, the audited person controls the audit.
+
+- `TirolesaTrip.start_at` and `end_at` are not null and default to the current time at
+  the database. The API request still requires `start` and `end`.
+
+- `TirolesaDevice.offline` is now stored. A Vercel Schedule (`tirolesa-check-offline`,
+  every 30 minutes from 06:00 to 17:30 São Paulo time, every day) calls
+  `POST /tirolesa/devices/check-offline`, which marks active
+  devices not seen for 15 minutes as offline. Any device request clears it. The status
+  can lag by up to about an hour. No notification is sent yet; the owner will choose a
+  method later.
 
 ## Intent
 
