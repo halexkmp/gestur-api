@@ -26,6 +26,8 @@ class Settings(BaseSettings):
     BLOB_STORE_ID: str | None = Field(default=os.getenv("BLOB_STORE_ID"))
     BLOB_READ_WRITE_TOKEN: str | None = Field(default=os.getenv("BLOB_READ_WRITE_TOKEN"))
     BLOB_FOLDER: str | None = Field(default=os.getenv("BLOB_FOLDER"))
+    # Vercel Schedules: sent by the scheduler in the Authorization header
+    CRON_SECRET: str | None = Field(default=None)
     # CORS
     ALLOWED_ORIGINS: List[str] = Field(default_factory=list)
 

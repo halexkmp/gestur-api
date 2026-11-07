@@ -43,3 +43,13 @@ class LoanInstallmentStatus(str, Enum):
     PENDING = "PENDING"
     PARTIALLY_PAID = "PARTIALLY_PAID"
     PAID = "PAID"
+
+class TirolesaJustificationType(str, Enum):
+    TEST = "TEST"
+    COURTESY = "COURTESY"
+    OTHER = "OTHER"
+
+class TirolesaAuditStatus(str, Enum):
+    BALANCED = "BALANCED"
+    UNEXPLAINED = "UNEXPLAINED"
+    SOLD_ABOVE_DETECTED = "SOLD_ABOVE_DETECTED"
