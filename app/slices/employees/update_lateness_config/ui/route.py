@@ -20,6 +20,8 @@ async def route(data: UpdateLatenessConfigRequest, current_user=Depends(get_curr
             tolerance_minutes=data.tolerance_minutes,
             deduction_interval_minutes=data.deduction_interval_minutes,
             deduction_value=data.deduction_value,
+            late_penalty_hours=data.late_penalty_hours,
+            monthly_work_hours=data.monthly_work_hours,
         )
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))

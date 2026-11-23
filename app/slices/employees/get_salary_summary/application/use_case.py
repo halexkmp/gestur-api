@@ -8,6 +8,7 @@ from app.slices.employees.get_salary_summary.domain.rules import (
     calculate_daily_delay_minutes,
     is_late,
     calculate_deduction,
+    calculate_late_penalty,
 )
 
 
@@ -53,14 +54,21 @@ class GetSalarySummary:
                 (Decimal(advance.amount) for advance in employee_advances), Decimal("0")
             )
 
-            late_delay_minutes, late_days_count, late_deduction_total = self._calculate_lateness(
+            gross_salary = Decimal(employee.salary)
+
+            (
+                late_delay_minutes,
+                late_days_count,
+                late_deduction_total,
+                late_penalty_total,
+            ) = self._calculate_lateness(
                 employee_user_id=employee.user_id,
                 config=config,
                 timestamps=timestamps_by_user.get(employee.user_id, []) if employee.user_id else [],
+                salary=gross_salary,
             )
 
-            gross_salary = Decimal(employee.salary)
-            net_salary = gross_salary - advances_total - late_deduction_total
+            net_salary = gross_salary - advances_total - late_deduction_total - late_penalty_total
 
             results.append(
                 {
@@ -81,6 +89,7 @@ class GetSalarySummary:
                     "late_delay_minutes": late_delay_minutes,
                     "late_days_count": late_days_count,
                     "late_deduction_total": late_deduction_total,
+                    "late_penalty_total": late_penalty_total,
                     "net_salary": net_salary,
                 }
             )
@@ -92,12 +101,13 @@ class GetSalarySummary:
         employee_user_id: UUID | None,
         config: Optional[LatenessConfiguration],
         timestamps: List[datetime],
-    ) -> tuple[int, int, Decimal]:
+        salary: Decimal,
+    ) -> tuple[int, int, Decimal, Decimal]:
         if employee_user_id is None:
-            return 0, 0, Decimal("0")
+            return 0, 0, Decimal("0"), Decimal("0")
 
         if not config or not config.enabled:
-            return 0, 0, Decimal("0")
+            return 0, 0, Decimal("0"), Decimal("0")
 
         # Earliest check-in per calendar day is that day's entrance. Bucket by the
         # configured local day, not the UTC day the timestamp is stored in — a
@@ -127,4 +137,8 @@ class GetSalarySummary:
                 delay_minutes, config.deduction_interval_minutes, Decimal(config.deduction_value)
             )
 
-        return total_delay_minutes, late_days_count, total_deduction
+        total_penalty = calculate_late_penalty(
+            salary, config.monthly_work_hours, Decimal(config.late_penalty_hours), late_days_count
+        )
+
+        return total_delay_minutes, late_days_count, total_deduction, total_penalty

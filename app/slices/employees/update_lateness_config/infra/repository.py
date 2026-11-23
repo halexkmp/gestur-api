@@ -24,6 +24,8 @@ class UpdateLatenessConfigurationRepository:
         tolerance_minutes: int,
         deduction_interval_minutes: int,
         deduction_value: Decimal,
+        late_penalty_hours: Decimal,
+        monthly_work_hours: int,
     ) -> LatenessConfiguration:
         # Column is TIMETZ (matching the migration-seeded CURRENT_TIME row); always
         # bind a UTC-normalized value regardless of what offset the request carried.
@@ -37,6 +39,8 @@ class UpdateLatenessConfigurationRepository:
                 tolerance_minutes=tolerance_minutes,
                 deduction_interval_minutes=deduction_interval_minutes,
                 deduction_value=deduction_value,
+                late_penalty_hours=late_penalty_hours,
+                monthly_work_hours=monthly_work_hours,
             )
 
         config.enabled = enabled
@@ -44,5 +48,7 @@ class UpdateLatenessConfigurationRepository:
         config.tolerance_minutes = tolerance_minutes
         config.deduction_interval_minutes = deduction_interval_minutes
         config.deduction_value = deduction_value
+        config.late_penalty_hours = late_penalty_hours
+        config.monthly_work_hours = monthly_work_hours
         await config.save()
         return config

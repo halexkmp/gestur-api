@@ -10,6 +10,8 @@ class UpdateLatenessConfigRequest(BaseModel):
     tolerance_minutes: int
     deduction_interval_minutes: int
     deduction_value: Decimal
+    late_penalty_hours: Decimal
+    monthly_work_hours: int
 
 
 class LatenessConfigResponse(BaseModel):
@@ -18,6 +20,8 @@ class LatenessConfigResponse(BaseModel):
     tolerance_minutes: int
     deduction_interval_minutes: int
     deduction_value: Decimal
+    late_penalty_hours: Decimal
+    monthly_work_hours: int
 
     class Config:
         from_attributes = True
