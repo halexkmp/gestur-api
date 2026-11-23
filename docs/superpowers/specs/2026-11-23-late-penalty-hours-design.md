@@ -47,15 +47,15 @@ from the salary on top of the existing per-interval money deduction, which stays
 
 **`PUT /employees/lateness-config`** (`update_lateness_config`): both fields **required**
 (full replace, consistent with the existing contract — frontend and backend deploy together).
-Validation: `late_penalty_hours >= 0`, `monthly_work_hours > 0`; violations rejected like
+Validation: `0 <= late_penalty_hours < 1000` (column limit), `monthly_work_hours > 0`; violations rejected like
 the existing field validations.
 
 **`GET /employees/lateness-config`** (`get_lateness_config`): returns both fields; the
 bootstrapped default (no config yet) returns `0` and `220`.
 
-**Salary summaries** (`get_salary_summary`, `get_my_salary_summary`): each slice adds a
-pure function in its own `domain/rules.py` (following the existing per-slice duplication,
-not `app/shared/`), and responses gain `late_penalty_total` (Decimal). `net_salary`
+**Salary summaries** (`get_salary_summary`, `get_my_salary_summary`): one pure function
+in `get_salary_summary/domain/rules.py`, which `get_my_salary_summary` already imports its
+lateness rules from (not `app/shared/`), and responses gain `late_penalty_total` (Decimal). `net_salary`
 subtracts it.
 
 **Contract:** update `specs/api/employees.md` (config fields, validation, summary field,
@@ -63,8 +63,8 @@ net salary formula).
 
 ## Approaches considered
 
-1. **Per-slice domain rule (chosen):** pure function in each salary slice's `rules.py`.
-   Matches VSA and how lateness rules are already duplicated per slice.
+1. **Slice domain rule (chosen):** pure function in `get_salary_summary/domain/rules.py`,
+   reused by `get_my_salary_summary` exactly as its existing lateness rules are.
 2. **Shared helper in `app/shared/`:** less duplication, but CLAUDE.md forbids
    feature logic there.
 
