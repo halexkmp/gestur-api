@@ -70,5 +70,6 @@ def calculate_late_penalty(
     if monthly_work_hours <= 0 or late_days_count <= 0:
         return Decimal("0")
 
-    total = salary / monthly_work_hours * late_penalty_hours * late_days_count
+    # Multiply first, divide last: keeps the numerator exact so only one rounding happens.
+    total = salary * late_penalty_hours * late_days_count / monthly_work_hours
     return total.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
