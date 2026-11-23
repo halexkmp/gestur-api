@@ -188,7 +188,8 @@ items: [
     late_delay_minutes     # total minutes late across days beyond tolerance this month
     late_days_count        # count of days beyond tolerance this month
     late_deduction_total   # total lateness deduction this month
-    net_salary              # gross_salary - advances_total - late_deduction_total
+    late_penalty_total     # total late penalty this month (salary / monthly_work_hours * late_penalty_hours * late days)
+    net_salary              # gross_salary - advances_total - late_deduction_total - late_penalty_total
   },
   ...
 ]
@@ -202,7 +203,8 @@ items: [
   `advance_date` in the requested month/year; `advances_total` always equals the sum of
   `advances[].amount`. An employee with no advances that month/year has `advances: []` and
   `advances_total: "0.00"`.
-- `late_delay_minutes`, `late_days_count`, and `late_deduction_total` are `0`/`0.00` when the
+- `late_delay_minutes`, `late_days_count`, `late_deduction_total`, and `late_penalty_total`
+  are `0`/`0.00` when the
   lateness configuration is disabled or has never been created, or when the employee has no
   linked user account; `net_salary` is then numerically identical to
   `gross_salary - advances_total`.
@@ -229,7 +231,8 @@ both endpoints.
 Self-service equivalent of `GET /employees/salary-summary`, scoped to the caller. Returns a
 single object with the same per-employee fields as one item of the bulk endpoint above
 (`employee_id`, `month`, `year`, `gross_salary`, `advances_total`, `late_delay_minutes`,
-`late_days_count`, `late_deduction_total`, `net_salary`) — not the `items` wrapper, and
+`late_days_count`, `late_deduction_total`, `late_penalty_total`, `net_salary`) — not the
+`items` wrapper, and
 without the itemized `advances` array (that field is specific to the HR-facing bulk report).
 `month`/`year` are optional and default to the current month, same as the HR-facing
 endpoint.

@@ -1,5 +1,5 @@
 from datetime import datetime, time, timedelta, timezone
-from decimal import Decimal
+from decimal import Decimal, ROUND_HALF_UP
 
 
 def _time_of_day_minutes(value: datetime | time) -> float:
@@ -56,3 +56,19 @@ def calculate_deduction(
 
     blocks = delay_minutes // deduction_interval_minutes
     return blocks * deduction_value
+
+
+def calculate_late_penalty(
+    salary: Decimal,
+    monthly_work_hours: int,
+    late_penalty_hours: Decimal,
+    late_days_count: int,
+) -> Decimal:
+    """Flat per-late-day penalty: (salary / monthly_work_hours) * late_penalty_hours per
+    late day, total rounded half-up to cents. Zero when there is no valid divisor
+    or no late day."""
+    if monthly_work_hours <= 0 or late_days_count <= 0:
+        return Decimal("0")
+
+    total = salary / monthly_work_hours * late_penalty_hours * late_days_count
+    return total.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)

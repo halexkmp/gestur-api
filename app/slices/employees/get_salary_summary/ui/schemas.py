@@ -25,6 +25,7 @@ class SalarySummaryItem(BaseModel):
     late_delay_minutes: int
     late_days_count: int
     late_deduction_total: Decimal
+    late_penalty_total: Decimal
     net_salary: Decimal
 
     class Config:

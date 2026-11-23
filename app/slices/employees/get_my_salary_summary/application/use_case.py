@@ -6,6 +6,7 @@ from app.slices.employees.get_salary_summary.domain.rules import (
     calculate_daily_delay_minutes,
     is_late,
     calculate_deduction,
+    calculate_late_penalty,
 )
 
 
@@ -33,13 +34,19 @@ class GetMySalarySummary:
         salary: Decimal = Decimal(employee.salary)
         advances: Decimal = Decimal(advances_total)
 
-        late_delay_minutes, late_days_count, late_deduction_total = await self._calculate_lateness(
+        (
+            late_delay_minutes,
+            late_days_count,
+            late_deduction_total,
+            late_penalty_total,
+        ) = await self._calculate_lateness(
             employee_user_id=employee.user_id,
             month=month,
             year=year,
+            salary=salary,
         )
 
-        net = salary - advances - late_deduction_total
+        net = salary - advances - late_deduction_total - late_penalty_total
         return {
             "employee_id": employee.id,
             "month": month,
@@ -49,6 +56,7 @@ class GetMySalarySummary:
             "late_delay_minutes": late_delay_minutes,
             "late_days_count": late_days_count,
             "late_deduction_total": late_deduction_total,
+            "late_penalty_total": late_penalty_total,
             "net_salary": net,
         }
 
@@ -57,13 +65,14 @@ class GetMySalarySummary:
         employee_user_id: UUID | None,
         month: int,
         year: int,
-    ) -> tuple[int, int, Decimal]:
+        salary: Decimal,
+    ) -> tuple[int, int, Decimal, Decimal]:
         if employee_user_id is None:
-            return 0, 0, Decimal("0")
+            return 0, 0, Decimal("0"), Decimal("0")
 
         config = await self.repository.get_lateness_configuration()
         if not config or not config.enabled:
-            return 0, 0, Decimal("0")
+            return 0, 0, Decimal("0"), Decimal("0")
 
         timestamps = await self.repository.get_journey_timestamps(
             user_id=employee_user_id, month=month, year=year
@@ -97,4 +106,8 @@ class GetMySalarySummary:
                 delay_minutes, config.deduction_interval_minutes, Decimal(config.deduction_value)
             )
 
-        return total_delay_minutes, late_days_count, total_deduction
+        total_penalty = calculate_late_penalty(
+            salary, config.monthly_work_hours, Decimal(config.late_penalty_hours), late_days_count
+        )
+
+        return total_delay_minutes, late_days_count, total_deduction, total_penalty
