@@ -8,6 +8,8 @@ DEFAULT_CONFIG = {
     "tolerance_minutes": 0,
     "deduction_interval_minutes": 0,
     "deduction_value": Decimal("0"),
+    "late_penalty_hours": Decimal("0"),
+    "monthly_work_hours": 220,
 }
 
 
@@ -26,4 +28,6 @@ class GetLatenessConfiguration:
             "tolerance_minutes": config.tolerance_minutes,
             "deduction_interval_minutes": config.deduction_interval_minutes,
             "deduction_value": Decimal(config.deduction_value),
+            "late_penalty_hours": Decimal(config.late_penalty_hours),
+            "monthly_work_hours": config.monthly_work_hours,
         }
